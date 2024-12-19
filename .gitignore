@@ -1,0 +1,113 @@
+# Local configuration files
+.zshrc.local
+.bashrc.local
+.gitconfig.local
+*.local
+
+# Secret and API key files
+.secret
+.secrets/
+.env
+.env.*
+secrets.yaml
+.tokens
+.api_keys
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+Icon
+
+# Editor and IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.*.sw[a-p]
+.vim/.netrwhist
+*.sublime-workspace
+*.sublime-project
+
+# Logs and temporary files
+*.log
+*.cache
+log/
+logs/
+tmp/
+temp/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.python-version
+.env/
+.venv/
+venv/
+ENV/
+
+# Ruby
+.bundle/
+vendor/bundle
+.ruby-version
+.ruby-gemset
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# History files
+.bash_history
+.zsh_history
+.zhistory
+.history/
+.lesshst
+.node_repl_history
+
+# SSH and GPG
+.ssh/id_*
+.ssh/*_id_*
+.gnupg/
+.gpg
+.pgp
+
+# Misc application data
+.config/**/data/
+.local/share/
+.cache/
+
+# Shell generated files
+.zcompdump*
+.zsh_sessions/
+.bash_sessions/
