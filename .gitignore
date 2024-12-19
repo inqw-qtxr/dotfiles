@@ -111,3 +111,6 @@ vendor/bundle
 .zcompdump*
 .zsh_sessions/
 .bash_sessions/
+.nvim/nvim
+# Ignore symlinks
+*/**/->*
