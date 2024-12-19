@@ -6,20 +6,20 @@ return {
         "nvim-telescope/telescope-file-browser.nvim",
     },
     keys = {
-        { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-        { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-        { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
-        { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
-        { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
-        { "<leader>fd", "<cmd>Telescope file_browser<cr>", desc = "File Browser" },
+        { "<leader>ff", "<cmd>Telescope find_files<cr>",                desc = "Find Files" },
+        { "<leader>fg", "<cmd>Telescope live_grep<cr>",                 desc = "Live Grep" },
+        { "<leader>fb", "<cmd>Telescope buffers<cr>",                   desc = "Buffers" },
+        { "<leader>fh", "<cmd>Telescope help_tags<cr>",                 desc = "Help Tags" },
+        { "<leader>fr", "<cmd>Telescope oldfiles<cr>",                  desc = "Recent Files" },
+        { "<leader>fd", "<cmd>Telescope file_browser<cr>",              desc = "File Browser" },
         { "<leader>fl", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Find in Current Buffer" },
-        { "<leader>fs", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
-        { "<leader>fw", "<cmd>Telescope lsp_workspace_symbols<cr>", desc = "Workspace Symbols" },
+        { "<leader>fs", "<cmd>Telescope lsp_document_symbols<cr>",      desc = "Document Symbols" },
+        { "<leader>fw", "<cmd>Telescope lsp_workspace_symbols<cr>",     desc = "Workspace Symbols" },
         { "<leader>fc", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Find in Current Buffer" },
-        { "<leader>fm", "<cmd>Telescope marks<cr>", desc = "Browse Marks" },
-        { "<leader>ft", "<cmd>Telescope treesitter<cr>", desc = "Browse Treesitter Symbols" },
-        { "<leader>gf", "<cmd>Telescope git_files<cr>", desc = "Git Files" },
-        { "<leader>fW", "<cmd>Telescope grep_string<cr>", desc = "Find word under cursor" },
+        { "<leader>fm", "<cmd>Telescope marks<cr>",                     desc = "Browse Marks" },
+        { "<leader>ft", "<cmd>Telescope treesitter<cr>",                desc = "Browse Treesitter Symbols" },
+        { "<leader>gf", "<cmd>Telescope git_files<cr>",                 desc = "Git Files" },
+        { "<leader>fW", "<cmd>Telescope grep_string<cr>",               desc = "Find word under cursor" },
     },
     config = function()
         local telescope = require("telescope")
@@ -118,11 +118,11 @@ return {
             pickers = {
                 find_files = {
                     hidden = true,
-                    find_command = { "fd", "--type", "f", "--strip-cwd-prefix" }
+                    find_command = { "fd", "--type", "f", "--hidden", "--strip-cwd-prefix" }
                 },
                 live_grep = {
                     additional_args = function(opts)
-                        return {"--hidden"}
+                        return { "--hidden" }
                     end
                 },
                 buffers = {
@@ -156,3 +156,4 @@ return {
         vim.g.telescope_test_picker = test_picker
     end,
 }
+
