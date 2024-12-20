@@ -19,7 +19,7 @@ return {
             invert_tabline = false,
             invert_intend_guides = false,
             inverse = true,
-            contrast = "hard",
+            contrast = "soft",
             palette_overrides = {
                 bright_green = "#a9b665",
             },
