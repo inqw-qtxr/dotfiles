@@ -18,9 +18,9 @@ vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
 vim.opt.undolevels = 10000
 vim.opt.undoreload = 100000
 vim.opt.statusline = "%f %y %r %m %=%l,%c %p%%"
--- Ensure no delays for escape key
 vim.opt.timeout = false
 vim.opt.ttimeout = false
 vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
--- Ensure escape key works properly in terminal
+vim.opt.ignorecase = true
+vim.opt.smartcase = true

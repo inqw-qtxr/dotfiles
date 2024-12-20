@@ -16,6 +16,7 @@ A comprehensive Neovim configuration with support for multiple languages and mod
 - [Language Specific Features](#language-specific-features)
 - [Window Management](#window-management)
 - [Code Navigation & Selection](#code-navigation--selection)
+- [AI Assistant Integration](#ai-assistant-integration)
 
 ## Core Navigation & Basic Operations
 
@@ -95,7 +96,10 @@ A comprehensive Neovim configuration with support for multiple languages and mod
 - `ds{char}` - Delete surround
 - `cs{target}{replacement}` - Change surround
 - `yss{char}` - Surround entire line
+- `ySS{char}` - Surround entire line on new lines
 - Visual Mode: `S{char}` - Surround selection
+- Insert Mode: `<C-g>s` - Add surrounding
+- Insert Mode: `<C-g>S` - Add surrounding on new lines
 
 ### Auto-Pairs
 - `<M-e>` - Fast wrap (Alt+e)
@@ -204,6 +208,9 @@ A comprehensive Neovim configuration with support for multiple languages and mod
 - `<leader>tsr` - Rename file
 - `<leader>tsd` - Go to source definition
 
+### Markdown
+- `<leader>mp` - Toggle Markdown Preview in browser
+
 ## Window Management
 - `<leader>sh` - Split horizontally
 - `<leader>se` - Make splits equal size
@@ -225,6 +232,18 @@ A comprehensive Neovim configuration with support for multiple languages and mod
 ### Context
 - `[c` - Go to context
 - `<leader>tc` - Toggle treesitter context
+
+## AI Assistant Integration (Copilot)
+
+### Suggestions
+- `<C-]>` - Next suggestion
+- `<C-[>` - Previous suggestion
+- `<C-\>` - Dismiss suggestion
+
+### Panel Controls
+- `<leader>co` - Open Copilot panel
+- `<leader>cdp` - Disable Copilot
+- `<leader>cep` - Enable Copilot
 
 ## Settings and Features
 
