@@ -18,6 +18,27 @@ require("lazy").setup({
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-treesitter/playground" }, -- Additional Treesitter tools
 
+    -- TypeScript/React Development
+    { "pmizio/typescript-tools.nvim" },
+    { "maxmellon/vim-jsx-pretty", dependencies = { "yuezk/vim-js" } },
+    { "windwp/nvim-ts-autotag" },
+    { "MunifTanjim/prettier.nvim" },
+
+    -- TypeScript/React Development
+    { "pmizio/typescript-tools.nvim" },
+
+    -- Ruby/Rails Development
+    { "weizheheng/nvim-rails", dependencies = { "nvim-lua/plenary.nvim" } },
+    { "tpope/vim-rails", dependencies = { "tpope/vim-bundler", "tpope/vim-projectionist" } },
+    { "RRethy/nvim-treesitter-endwise" },
+    { "tpope/vim-rake" },
+    { "tpope/vim-bundler" },
+    { "slim-template/vim-slim" },
+    { "rcarriga/nvim-notify" },
+    { "maxmellon/vim-jsx-pretty", dependencies = { "yuezk/vim-js" } },
+    { "windwp/nvim-ts-autotag" },
+    { "MunifTanjim/prettier.nvim" },
+
     -- Undo tree
     { "mbbill/undotree" },
 
@@ -52,6 +73,11 @@ require("lazy").setup({
     "hrsh7th/nvim-cmp",
     "hrsh7th/cmp-nvim-lsp",
 
+    -- Go development
+    { "ray-x/go.nvim", dependencies = { "ray-x/guihua.lua" } },
+    { "leoluz/nvim-dap-go" },
+    { "olexsmir/gopher.nvim" },
+
     -- Autopairs
     {
         "windwp/nvim-autopairs",
@@ -81,7 +107,8 @@ require("lazy").setup({
     -- GitHub Copilot
     { "github/copilot.vim" },
 
-    -- Add any additional plugins here
-    -- Avoid duplicating plugins already set by separate config files
-})
+    -- DAP (Debug Adapter Protocol)
+    { "mfussenegger/nvim-dap" },
 
+
+})

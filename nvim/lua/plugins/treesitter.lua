@@ -9,6 +9,9 @@ return {
             -- Languages
             "lua", "python", "typescript", "javascript", "go", "rust", "c", "cpp",
             "html", "css", "json", "yaml", "tsx",
+            "scss", "jsdoc", "prisma", "graphql", "regex",
+            -- Ruby
+            "ruby", "embedded_template",
             -- Shell and tools
             "bash", "fish", "make", "dockerfile",
             -- Documentation

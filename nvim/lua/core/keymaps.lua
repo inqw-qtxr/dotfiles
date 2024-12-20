@@ -16,6 +16,7 @@ vim.keymap.set("n", "gV", "`[v`]", { noremap = true, desc = "Select last inserte
 vim.keymap.set("n", "<leader>cd", ":cd %:p:h<CR>:pwd<CR>", { noremap = true, desc = "Change directory to current file" })
 
 -- Yank to system clipboard
+vim.keymap.set({ "n", "v" }, "<leader>yf", [["+y]], { noremap = true, desc = "Yank file to system clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { noremap = true, desc = "Yank to system clipboard" })
 vim.keymap.set("n", "<leader>Y", [["+Y]], { noremap = true, desc = "Yank line to system clipboard" })
 
@@ -26,3 +27,4 @@ vim.keymap.set("n", "<leader>x", ":x<CR>", { noremap = true, desc = "Save & Quit
 
 -- Reload Config
 vim.keymap.set("n", "<leader>r", ":source $MYVIMRC<CR>", { noremap = true, desc = "Reload configuration" })
+
