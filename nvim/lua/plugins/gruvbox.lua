@@ -8,7 +8,7 @@ return {
             underline = true,
             bold = true,
             italic = {
-                strings = true,
+                strings = false,
                 comments = true,
                 operators = false,
                 folds = true,
@@ -19,7 +19,7 @@ return {
             invert_tabline = false,
             invert_intend_guides = false,
             inverse = true,
-            contrast = "soft",
+            contrast = "hard",
             palette_overrides = {
                 bright_green = "#a9b665",
             },
