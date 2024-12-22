@@ -8,7 +8,7 @@ return {
                 -- Formatters
                 "golines",          -- Line length formatter
                 "gofumpt",          -- Strict formatter
-                "goimports-reviser", -- Import management (modern replacement)
+                "goimports",        -- Import management
                 -- Debug
                 "delve",            -- Debugger
                 -- Linters
@@ -40,10 +40,9 @@ return {
         opts = {
             -- Shared options
             go = "go",
-            goimport = "goimports-reviser", -- Updated import manager
+            goimports = "goimports",        -- Updated to use goimports
             fillstruct = "gopls",
-            formatter = "golines", -- Set golines as primary formatter
-            max_line_len = 120,
+            formatter = "gofumpt",          -- Changed to gofumpt as base formatter
             tag_transform = false,
             test_template = "",
             test_dir = "",
@@ -79,8 +78,6 @@ return {
                         },
                         -- Completion settings
                         completionDocumentation = true,
-                        completionPreselect = "Enable",
-                        useCompletionMatchDistance = true,
                         deepCompletion = true,
                         matcher = "Fuzzy",
                         -- Hints
@@ -197,9 +194,9 @@ return {
         opts = {
             formatters_by_ft = {
                 go = { 
-                    "golines",          -- Primary formatter for line length
-                    "gofumpt",          -- Style formatting
-                    "goimports-reviser", -- Import management
+                    "gofumpt",      -- Style formatting first
+                    "goimports",    -- Handle imports
+                    "golines",      -- Line length formatting last
                 },
             },
             formatters = {
@@ -207,14 +204,6 @@ return {
                     args = { 
                         "--max-len", "120",
                         "--base-formatter", "gofumpt",
-                    },
-                },
-                ["goimports-reviser"] = {
-                    args = {
-                        "-rm-unused",
-                        "-set-alias",
-                        "-format",
-                        "-output", "file",
                     },
                 },
             },

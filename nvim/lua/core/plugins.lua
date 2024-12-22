@@ -96,7 +96,7 @@ require("lazy").setup({
                 invert_tabline = false,
                 invert_intend_guides = false,
                 inverse = true,
-                contrast = "hard",
+                contrast = "",
                 palette_overrides = {},
                 overrides = {},
                 dim_inactive = false,

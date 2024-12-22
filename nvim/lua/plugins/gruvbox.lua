@@ -7,7 +7,7 @@ return {
         terminal_colors = true,
         transparent_mode = false,
         dim_inactive = false,
-        contrast = "", -- Can be "hard", "soft" or ""
+        contrast = "medium", -- Use medium contrast
 
         -- Style settings
         styles = {
@@ -33,38 +33,49 @@ return {
         inverse = true, -- Invert background for search, diffs, statuslines and errors
 
         -- Custom highlights
-        palette_overrides = {
-            -- Example: Customize specific colors
-            -- dark0 = "#262626",
-            -- light0 = "#fbf1c7",
-        },
+        palette_overrides = {},
 
         -- Override specific highlight groups
         overrides = {
-            -- Enhance certain highlight groups
-            Search = { bg = "#b8bb26", fg = "#282828" },
+            -- UI Elements with medium contrast
             SignColumn = { bg = "NONE" },
+            GruvboxGreenSign = { fg = "#b8bb26", bg = "NONE" },
+            GruvboxAquaSign = { fg = "#8ec07c", bg = "NONE" },
+            GruvboxRedSign = { fg = "#fb4934", bg = "NONE" },
+            
+            -- Enhanced visibility for medium contrast
+            Search = { bg = "#a89984", fg = "#282828" },
+            Visual = { bg = "#504945" },
+            
+            -- Status line with medium contrast
+            StatusLine = { bg = "#504945", fg = "#ebdbb2" },
+            StatusLineNC = { bg = "#3c3836", fg = "#a89984" },
+            
+            -- Better float windows
+            NormalFloat = { bg = "#3c3836" },
+            FloatBorder = { bg = "#3c3836", fg = "#a89984" },
+
+            -- Git signs with medium contrast
             GitSignsAdd = { fg = "#b8bb26", bg = "NONE" },
             GitSignsChange = { fg = "#fabd2f", bg = "NONE" },
             GitSignsDelete = { fg = "#fb4934", bg = "NONE" },
-            -- Language-specific overrides
-            ["@variable"] = { fg = "#ebdbb2" },
-            ["@function"] = { bold = true },
-            ["@keyword"] = { italic = true },
-            -- UI Elements
-            StatusLine = { bg = "#3c3836", fg = "#ebdbb2" },
-            StatusLineNC = { bg = "#3c3836", fg = "#928374" },
-            TabLine = { bg = "#3c3836", fg = "#928374" },
-            TabLineSel = { bg = "#504945", fg = "#ebdbb2" },
-            -- Float windows
-            NormalFloat = { bg = "#3c3836" },
-            FloatBorder = { bg = "#3c3836", fg = "#928374" },
-        },
+
+            -- Diagnostics with medium contrast
+            DiagnosticError = { fg = "#fb4934" },
+            DiagnosticWarn = { fg = "#fabd2f" },
+            DiagnosticInfo = { fg = "#83a598" },
+            DiagnosticHint = { fg = "#8ec07c" },
+
+            -- Better diff colors
+            DiffAdd = { bg = "#3b4439" },
+            DiffChange = { bg = "#3b4439" },
+            DiffDelete = { bg = "#442b2a" },
+            DiffText = { bg = "#345657" }
+        }
     },
     config = function(_, opts)
-        -- Set up colorscheme
         require("gruvbox").setup(opts)
-
+        
         -- Create autogroup for colorscheme customization
         local group = vim.api.nvim_create_augroup("GruvboxCustom", { clear = true })
 
@@ -81,20 +92,6 @@ return {
                 vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#fabd2f" })
                 vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = "#83a598" })
                 vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = "#8ec07c" })
-                
-                -- Customize indent-blankline
-                vim.api.nvim_set_hl(0, "IndentBlanklineChar", { fg = "#504945" })
-                
-                -- Enhance Telescope highlights
-                vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "#3c3836" })
-                vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "#32302f" })
-                vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = "#32302f" })
-                
-                -- Better diff colors
-                vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#32361a" })
-                vim.api.nvim_set_hl(0, "DiffChange", { bg = "#333841" })
-                vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3c1f1e" })
-                vim.api.nvim_set_hl(0, "DiffText", { bg = "#394b70" })
             end,
         })
 
@@ -109,14 +106,13 @@ return {
         end, { desc = "Toggle transparent background" })
 
         vim.api.nvim_create_user_command("ToggleContrast", function()
-            local contrasts = { "", "soft", "hard" }
-            local current = vim.tbl_contains(contrasts, opts.contrast) and opts.contrast or ""
-            local idx = (vim.tbl_contains(contrasts, current) and vim.fn.index(contrasts, current) or 0) + 1
-            if idx > #contrasts then idx = 1 end
-            opts.contrast = contrasts[idx]
+            local contrasts = { "soft", "medium", "hard" }
+            local current_idx = vim.fn.index(contrasts, opts.contrast) + 1
+            if current_idx > #contrasts then current_idx = 1 end
+            opts.contrast = contrasts[current_idx]
             require("gruvbox").setup(opts)
             vim.cmd([[colorscheme gruvbox]])
-            vim.notify("Contrast set to: " .. (opts.contrast == "" and "medium" or opts.contrast))
+            vim.notify("Contrast set to: " .. opts.contrast)
         end, { desc = "Toggle contrast level" })
     end,
 }
