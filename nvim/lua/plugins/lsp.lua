@@ -1,206 +1,211 @@
 return {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-        "hrsh7th/nvim-cmp",
-        "hrsh7th/cmp-nvim-lsp",
-    },
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-        -- Move your existing configuration here
-        local lspconfig = require("lspconfig")
+    {
+        "neovim/nvim-lspconfig",
+        event = { "BufReadPre", "BufNewFile" },
+        dependencies = {
+            "folke/neodev.nvim", -- Adds support for Neovim Lua API
+            "hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
+            "williamboman/mason.nvim",
+            "williamboman/mason-lspconfig.nvim",
+            "j-hui/fidget.nvim", -- Standalone UI for LSP progress
+        },
+        config = function()
+            -- Setup neovim lua configuration
+            require("neodev").setup()
 
-        -- Set up completion capabilities for nvim-cmp
-        local capabilities = vim.lsp.protocol.make_client_capabilities()
-        local has_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-        if has_cmp then
-            capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
-        end
+            -- Setup fidget to show LSP progress
+            require("fidget").setup({
+                progress = {
+                    suppress_on_insert = false,
+                    ignore_done_already = false,
+                    ignore_empty_message = false,
+                },
+                notification = {
+                    window = {
+                        winblend = 0,
+                    },
+                },
+            })
 
-        -- Default keybindings for LSP functionality
-        local on_attach = function(client, bufnr)
-            local opts = { noremap = true, silent = true, buffer = bufnr }
+            -- Global LSP mappings
+            vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'Hover Documentation' })
+            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'Go to Definition' })
+            vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = 'Go to Declaration' })
+            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { desc = 'Go to Implementation' })
+            vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = 'Find References' })
+            vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { desc = 'Rename Symbol' })
+            vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = 'Code Actions' })
+            vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'Type Definition' })
+            vim.keymap.set('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = 'Document Symbols' })
+            vim.keymap.set('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = 'Workspace Symbols' })
 
-            -- LSP Navigation
-            vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-            vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-            vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-            vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+            -- Diagnostic keymaps
+            vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
+            vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
+            vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Float Diagnostic' })
+            vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Set Diagnostic to Location List' })
 
-            -- Workspace Management
-            vim.keymap.set("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts)
-            vim.keymap.set("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, opts)
-            vim.keymap.set("n", "<leader>wl", function()
-                print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-            end, opts)
+            -- LSP handlers configuration
+            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+                vim.lsp.handlers.hover, {
+                    border = "rounded",
+                    width = 60,
+                }
+            )
 
-            -- LSP Actions
-            vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-            vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-            vim.keymap.set("n", "<leader>fF", function()
-                vim.lsp.buf.format({ async = true })
-            end, opts)
+            vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+                vim.lsp.handlers.signature_help, {
+                    border = "rounded",
+                    width = 60,
+                }
+            )
 
-            -- Diagnostics
-            vim.keymap.set("n", "<leader>dd", vim.diagnostic.open_float, opts)
-            vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, opts)
-            vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, opts)
+            -- Diagnostic configuration
+            vim.diagnostic.config({
+                virtual_text = true,
+                signs = true,
+                update_in_insert = false,
+                underline = true,
+                severity_sort = true,
+                float = {
+                    border = 'rounded',
+                    source = 'always',
+                    header = '',
+                    prefix = '',
+                },
+            })
 
-            -- Set up autoformat on save if the client supports it
-            if client.server_capabilities.documentFormattingProvider then
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                    buffer = bufnr,
-                    callback = function()
-                        vim.lsp.buf.format({ async = false })
-                    end,
-                })
+            -- Set up signs
+            local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
+            for type, icon in pairs(signs) do
+                local hl = "DiagnosticSign" .. type
+                vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
             end
+
+            -- LSP settings (show documentation in a fancy floating window)
+            local float_opts = {
+                focusable = false,
+                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                border = 'rounded',
+                source = 'always',
+                prefix = ' ',
+            }
+
+            vim.diagnostic.config({ float = float_opts })
         end
+    },
+    {
+        "hrsh7th/nvim-cmp",
+        dependencies = {
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-cmdline",
+            "hrsh7th/cmp-nvim-lua",
+            "L3MON4D3/LuaSnip",
+            "saadparwaiz1/cmp_luasnip",
+            "rafamadriz/friendly-snippets",
+        },
+        config = function()
+            local cmp = require('cmp')
+            local luasnip = require('luasnip')
 
-        -- Lua
-        lspconfig.lua_ls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-                Lua = {
-                    runtime = { version = "LuaJIT" },
-                    diagnostics = { globals = { "vim" } },
-                    workspace = {
-                        library = vim.api.nvim_get_runtime_file("", true),
-                        checkThirdParty = false,
-                    },
-                    telemetry = { enable = false },
+            require("luasnip.loaders.from_vscode").lazy_load()
+
+            cmp.setup({
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
                 },
-            },
-        })
-
-        -- Python - using pyright for types, ruff-lsp for linting
-        lspconfig.pyright.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-        })
-
-        lspconfig.ruff.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-        })
-
-        -- TypeScript/JavaScript
-        lspconfig.ts_ls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-                typescript = {
-                    inlayHints = {
-                        includeInlayParameterNameHints = "all",
-                        includeInlayPropertyDeclarationTypeHints = true,
-                    },
+                mapping = cmp.mapping.preset.insert({
+                    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+                    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                    ['<C-Space>'] = cmp.mapping.complete(),
+                    ['<C-e>'] = cmp.mapping.abort(),
+                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    ['<Tab>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        elseif luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        else
+                            fallback()
+                        end
+                    end, { 'i', 's' }),
+                    ['<S-Tab>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        elseif luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, { 'i', 's' }),
+                }),
+                sources = cmp.config.sources({
+                    { name = 'nvim_lsp' },
+                    { name = 'luasnip' },
+                    { name = 'buffer' },
+                    { name = 'path' },
+                    { name = 'nvim_lua' },
+                }),
+                formatting = {
+                    format = function(entry, vim_item)
+                        -- Kind icons
+                        local kind_icons = {
+                            Text = "",
+                            Method = "󰆧",
+                            Function = "󰊕",
+                            Constructor = "",
+                            Field = "󰇽",
+                            Variable = "󰂡",
+                            Class = "󰠱",
+                            Interface = "",
+                            Module = "",
+                            Property = "󰜢",
+                            Unit = "",
+                            Value = "󰎠",
+                            Enum = "",
+                            Keyword = "󰌋",
+                            Snippet = "",
+                            Color = "󰏘",
+                            File = "󰈙",
+                            Reference = "",
+                            Folder = "󰉋",
+                            EnumMember = "",
+                            Constant = "󰏿",
+                            Struct = "",
+                            Event = "",
+                            Operator = "󰆕",
+                            TypeParameter = "󰅲",
+                        }
+                        vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+                        return vim_item
+                    end
                 },
-            },
-        })
+                window = {
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
+                },
+            })
 
-        -- Enhanced TypeScript/React setup
-        lspconfig.eslint.setup({
-            on_attach = function(client, bufnr)
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                    buffer = bufnr,
-                    command = "EslintFixAll",
+            -- Set up command-line completion
+            cmp.setup.cmdline(':', {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = cmp.config.sources({
+                    { name = 'path' },
+                    { name = 'cmdline' }
                 })
-                on_attach(client, bufnr)
-            end,
-            capabilities = capabilities,
-        })
+            })
 
-        -- Go
-        lspconfig.gopls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            flags = {
-                silent = true,
-                debounce_text_changes = 150,
-            },
-            settings = {
-                gopls = {
-                    analyses = {
-                        unusedparams = true,
-                        shadow = true,
-                        unusedwrite = true,
-                        useany = true,
-                        nilness = true,
-                        ST1000 = true, -- check for missing package documentation
-                        ST1003 = true, -- check for proper naming
-                        fieldalignment = true,
-                    },
-                    staticcheck = true,
-                    gofumpt = true,
-                    usePlaceholders = true,
-                    completeUnimported = true,
-                    semanticTokens = true,
-                    codelenses = {
-                        gc_details = true,
-                        generate = true,
-                        regenerate_cgo = true,
-                        run_govulncheck = true,
-                        test = true,
-                        tidy = true,
-                        upgrade_dependency = true,
-                    },
-                    hints = {
-                        assignVariableTypes = true,
-                        compositeLiteralFields = true,
-                        compositeLiteralTypes = true,
-                        constantValues = true,
-                        functionTypeParameters = true,
-                        parameterNames = true,
-                        rangeVariableTypes = true,
-                    },
-                },
-            },
-        })
-
-        -- Rust
-        lspconfig.rust_analyzer.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-                ["rust-analyzer"] = {
-                    assist = {
-                        importGranularity = "module",
-                        importPrefix = "by_self",
-                    },
-                    cargo = { allFeatures = true },
-                    checkOnSave = { command = "clippy" },
-                    procMacro = { enable = true },
-                },
-            },
-        })
-
-        -- C/C++
-        lspconfig.clangd.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            cmd = {
-                "clangd",
-                "--background-index",
-                "--clang-tidy",
-                "--header-insertion=iwyu",
-            },
-        })
-
-        -- Web dev
-        local servers = {
-            "html",
-            "cssls",
-            "jsonls",
-            "yamlls",
-            "bashls",
-        }
-
-        -- Basic setup for simple servers
-        for _, server in ipairs(servers) do
-            lspconfig[server].setup({
-                on_attach = on_attach,
-                capabilities = capabilities,
+            -- Set up search completion
+            cmp.setup.cmdline('/', {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = {
+                    { name = 'buffer' }
+                }
             })
         end
-    end,
+    },
 }

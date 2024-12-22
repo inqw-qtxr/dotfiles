@@ -24,3 +24,19 @@ vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+
+-- Python specific settings
+vim.g.python3_host_prog = vim.fn.exepath('python3') -- Use system Python for Neovim
+vim.opt_local.expandtab = true
+vim.opt_local.shiftwidth = 4
+vim.opt_local.tabstop = 4
+vim.opt_local.softtabstop = 4
+
+-- Add Python specific autocommands
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "python",
+    callback = function()
+        vim.opt_local.colorcolumn = "88"  -- Black's default line length
+        vim.opt_local.textwidth = 88
+    end,
+})

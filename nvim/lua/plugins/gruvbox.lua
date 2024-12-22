@@ -1,6 +1,7 @@
 return {
     "ellisonleao/gruvbox.nvim",
-    priority = 1000, -- Ensure colorscheme loads before other plugins
+    lazy = false,  -- Load immediately
+    priority = 1000,  -- Load before other plugins
     config = function()
         require("gruvbox").setup({
             terminal_colors = true,
@@ -8,7 +9,8 @@ return {
             underline = true,
             bold = true,
             italic = {
-                strings = false,
+                strings = true,
+                emphasis = true,
                 comments = true,
                 operators = false,
                 folds = true,
@@ -19,19 +21,11 @@ return {
             invert_tabline = false,
             invert_intend_guides = false,
             inverse = true,
-            contrast = "hard",
-            palette_overrides = {
-                bright_green = "#a9b665",
-            },
-            overrides = {
-                SignColumn = { bg = "NONE" },
-                GruvboxGreenSign = { bg = "NONE" },
-                GruvboxAquaSign = { bg = "NONE" },
-                GruvboxRedSign = { bg = "NONE" },
-            },
+            contrast = "",
+            palette_overrides = {},
+            overrides = {},
             dim_inactive = false,
             transparent_mode = false,
         })
-        vim.cmd.colorscheme("gruvbox")
     end,
 }

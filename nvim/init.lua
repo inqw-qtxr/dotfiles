@@ -1,9 +1,8 @@
--- Core configurations that don't depend on plugins
-vim.g.ssl_cert_file = "/opt/homebrew/etc/openssl@3/cert.pem"  -- Adjust path if needed
-require("core.settings")  -- vim settings
-require("core.keymaps")   -- basic keymaps that don't depend on plugins
+vim.g.ssl_cert_file = "/opt/homebrew/etc/openssl@3/cert.pem"
 
--- Initialize lazy.nvim plugin manager
+require("core.settings") 
+require("core.keymaps")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -17,18 +16,25 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Load all plugins
 require("lazy").setup("plugins", {
     change_detection = {
         notify = false,
     },
     rocks = {
-        enabled = false,  -- Disable luarocks integration
+        enabled = false,
     }
 })
 
--- Post-plugin commands that need to run after everything is loaded
-vim.cmd([[
-    colorscheme gruvbox
-    filetype plugin indent on
-]])
+local colorscheme = "gruvbox"
+local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
+if not status_ok then
+    vim.notify("Error: Colorscheme " .. colorscheme .. " not found!", vim.log.levels.WARN)
+    -- Try to set a fallback colorscheme
+    local fallback_colorscheme = "desert"
+    local fallback_status = pcall(vim.cmd, "colorscheme " .. fallback_colorscheme)
+    if not fallback_status then
+        vim.notify("Error: Fallback colorscheme also failed to load!", vim.log.levels.ERROR)
+    end
+end
+
+vim.cmd('filetype plugin indent on')

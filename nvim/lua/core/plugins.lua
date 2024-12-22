@@ -15,29 +15,21 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugin Setup
 require("lazy").setup({
     -- Syntax Highlighting
+-- Plugin Setup
+require("lazy").setup({
+    -- Syntax Highlighting
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-treesitter/playground" }, -- Additional Treesitter tools
 
-    -- TypeScript/React Development
-    { "pmizio/typescript-tools.nvim" },
-    { "maxmellon/vim-jsx-pretty", dependencies = { "yuezk/vim-js" } },
-    { "windwp/nvim-ts-autotag" },
-    { "MunifTanjim/prettier.nvim" },
+    -- Include the new Ruby configuration
+    { import = "plugins.ruby" },
+    { "tpope/vim-rails" },
 
-    -- TypeScript/React Development
-    { "pmizio/typescript-tools.nvim" },
+    -- Include the new Go configuration
+    { import = "plugins.go" },
 
-    -- Ruby/Rails Development
-    { "weizheheng/nvim-rails", dependencies = { "nvim-lua/plenary.nvim" } },
-    { "tpope/vim-rails", dependencies = { "tpope/vim-bundler", "tpope/vim-projectionist" } },
-    { "RRethy/nvim-treesitter-endwise" },
-    { "tpope/vim-rake" },
-    { "tpope/vim-bundler" },
-    { "slim-template/vim-slim" },
-    { "rcarriga/nvim-notify" },
-    { "maxmellon/vim-jsx-pretty", dependencies = { "yuezk/vim-js" } },
-    { "windwp/nvim-ts-autotag" },
-    { "MunifTanjim/prettier.nvim" },
+    -- Include the new C/C++ configuration
+    { import = "plugins.cpp" },
 
     -- Undo tree
     { "mbbill/undotree" },
@@ -68,16 +60,6 @@ require("lazy").setup({
         end,
     },
 
-    -- LSP (Language Server Protocol)
-    "neovim/nvim-lspconfig",
-    "hrsh7th/nvim-cmp",
-    "hrsh7th/cmp-nvim-lsp",
-
-    -- Go development
-    { "ray-x/go.nvim", dependencies = { "ray-x/guihua.lua" } },
-    { "leoluz/nvim-dap-go" },
-    { "olexsmir/gopher.nvim" },
-
     -- Autopairs
     {
         "windwp/nvim-autopairs",
@@ -86,13 +68,15 @@ require("lazy").setup({
         end,
     },
 
-    -- Formatters and Linters
-    { "jose-elias-alvarez/null-ls.nvim" },
+    -- DAP (Debug Adapter Protocol)
+    { "mfussenegger/nvim-dap" },
 
-    -- Statusline
-    "nvim-lualine/lualine.nvim",
+    -- Python Development
+    { "mfussenegger/nvim-dap-python" },
 
-    -- File Explorer
+    -- Markdown Preview
+    { "iamcco/markdown-preview.nvim", build = function() vim.fn["mkdp#util#install"]() end },
+})
     { "nvim-tree/nvim-tree.lua" },
 
     -- Git Integration
@@ -102,13 +86,68 @@ require("lazy").setup({
     { "vim-test/vim-test" },
 
     -- Gruvbox Theme
-    { "ellisonleao/gruvbox.nvim" },
+    {
+        "ellisonleao/gruvbox.nvim",
+        priority = 1000,
+        config = function()
+            require("gruvbox").setup({
+                terminal_colors = true,
+                undercurl = true,
+                underline = true,
+                bold = true,
+                italic = {
+                    strings = true,
+                    emphasis = true,
+                    comments = true,
+                    operators = false,
+                    folds = true,
+                },
+                strikethrough = true,
+                invert_selection = false,
+                invert_signs = false,
+                invert_tabline = false,
+                invert_intend_guides = false,
+                inverse = true,
+                contrast = "",
+                palette_overrides = {},
+                overrides = {},
+                dim_inactive = false,
+                transparent_mode = false,
+            })
+        end,
+    },
 
-    -- GitHub Copilot
-    { "github/copilot.vim" },
+    -- Supermaven
+    { "supermaven-inc/supermaven-nvim" },
+
+-- Barbar
+    {
+        'romgrk/barbar.nvim',
+        dependencies = {
+            'lewis6991/gitsigns.nvim',
+            'nvim-tree/nvim-web-devicons',
+        },
+        init = function() vim.g.barbar_auto_setup = false end,
+        opts = {
+            animation = true,
+            insert_at_end = true,
+            icons = {
+                buffer_index = true,
+                button = '',
+                modified = { button = '●' },
+                pinned = { button = '', filename = true },
+                separator = { left = '▎', right = '' },
+            },
+        },
+    },
 
     -- DAP (Debug Adapter Protocol)
+    -- DAP (Debug Adapter Protocol)
     { "mfussenegger/nvim-dap" },
+
+    -- Python Development
+    { "mfussenegger/nvim-dap-python" },
+
 
     -- Markdown Preview
     { "iamcco/markdown-preview.nvim", build = function() vim.fn["mkdp#util#install"]() end },

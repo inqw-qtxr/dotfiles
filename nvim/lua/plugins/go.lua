@@ -1,163 +1,105 @@
 return {
     {
-        "ray-x/go.nvim",
-        dependencies = {
-            "ray-x/guihua.lua",
-            "neovim/nvim-lspconfig",
-            "nvim-treesitter/nvim-treesitter",
+        "williamboman/mason.nvim",
+        opts = {
+            ensure_installed = {
+                "gopls",            -- Go LSP
+                "golines",          -- Go formatter for line length
+                "gofumpt",          -- Stricter Go formatter
+                "goimports",        -- Go import management
+                "gomodifytags",     -- Go modify struct tags
+                "impl",             -- Go interface implementation
+                "gotests",          -- Go test generation
+                "delve",            -- Go debugger
+                "golangci-lint",    -- Go linter
+                "revive",           -- Go linter (additional)
+            },
         },
         config = function()
-            require("go").setup({
-                -- Go toolchain settings
-                go = "go",                -- Path to go executable
-                gofmt = "golines",        -- Use golines for max_line_len support
-                max_line_len = 120,       -- Now effective since we're using golines
-                tag_transform = false,    -- tag_transfer check gomodifytags for details
-                test_template = "",       -- default to testify if not set; g:go_nvim_tests_template check gotests for details
-                test_template_dir = "",   -- default to nil if not set; g:go_nvim_tests_template_dir check gotests for details
-                comment_placeholder = "", -- comment_placeholder your cool placeholder e.g. 󰟓
-
-                -- Plugin settings
-                icons = { breakpoint = "🔴", currentpos = "🔸" },
-                notify_options = {
-                    silent = true,
-                    clear_previous = true,
-                },
-                verbose = false,
-                lsp_cfg = {
-                    capabilities = capabilities,
-                    settings = {
-                        gopls = {
-                            analyses = {
-                                unusedparams = true,
-                                shadow = true,
-                                unusedwrite = true,
-                                useany = true,
-                                nilness = true,
-                                ST1000 = true, -- check for missing package documentation
-                                ST1003 = true, -- check for proper naming
-                            },
-                            staticcheck = true,
-                            gofumpt = true,
-                            usePlaceholders = true,
-                            completeUnimported = true,
-                            semanticTokens = true,
-                            codelenses = {
-                                gc_details = true,
-                                generate = true,
-                                regenerate_cgo = true,
-                                run_govulncheck = true,
-                                test = true,
-                                tidy = true,
-                                upgrade_dependency = true,
-                            },
-                            hints = {
-                                assignVariableTypes = true,
-                                compositeLiteralFields = true,
-                                compositeLiteralTypes = true,
-                                constantValues = true,
-                                functionTypeParameters = true,
-                                parameterNames = true,
-                                rangeVariableTypes = true,
-                            },
-                        },
-                    },
-                },
-                lsp_gofumpt = true,   -- true: set default gofmt in gopls format to gofumpt
-                lsp_on_attach = true, -- use on_attach from go.nvim
-                lsp_document_formatting = true,
-                -- lsp_keymaps = true, -- set to false to disable gopls/lsp keymap
-                lsp_codelens = true,
-                diagnostic = {
-                    hdlr = true, -- hook lsp diag handler
-                    underline = true,
-                    virtual_text = { space = 0, prefix = "" },
-                    signs = true,
-                },
-
-                -- Highlighting and syntax
-                gopls_cmd = nil,
-                gopls_remote_auto = false, -- Disabling custom gopls settings here
-                test_runner = "go",
-                dap_debug = false,
-                sign_priority = 9,
-            })
-
-
-
-            -- Set up autocommands for Go files
-            local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                pattern = "*.go",
-                callback = function()
-                    require('go.format').goimport()
-                end,
-                group = format_sync_grp,
-            })
-
-            -- Go-specific keymaps
-            local function map(mode, lhs, rhs, desc)
-                vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc })
+            local function on_attach(client, bufnr)
+                vim.keymap.set("n", "<leader>gsj", "<cmd>GoAddTag json<CR>", { desc = "Go: Add json tags" })
+                vim.keymap.set("n", "<leader>gsy", "<cmd>GoAddTag yaml<CR>", { desc = "Go: Add yaml tags" })
+                vim.keymap.set("n", "<leader>gr", "<cmd>GoRemoveTags<CR>", { desc = "Go: Remove all tags" })
+                vim.keymap.set("n", "<leader>gt", "<cmd>GoTest<CR>", { desc = "Go: Run tests" })
+                vim.keymap.set("n", "<leader>gtf", "<cmd>GoTestFunc<CR>", { desc = "Go: Test function" })
+                vim.keymap.set("n", "<leader>gT", "<cmd>GoTestFile<CR>", { desc = "Go: Test file" })
+                vim.keymap.set("n", "<leader>gc", "<cmd>GoCmt<CR>", { desc = "Go: Generate comment" })
+                vim.keymap.set("n", "<leader>gfi", "<cmd>GoFillStruct<CR>", { desc = "Go: Fill struct" })
+                vim.keymap.set("n", "<leader>gim", "<cmd>GoImpl<CR>", { desc = "Go: Generate interface implementation" })
+                vim.keymap.set("n", "<leader>gif", "<cmd>GoIfErr<CR>", { desc = "Go: Generate if err" })
+                vim.keymap.set("n", "<leader>gat", "<cmd>GoAddTest<CR>", { desc = "Go: Generate test for function" })
+                vim.keymap.set("n", "<leader>gal", "<cmd>GoCodeLenAct<CR>", { desc = "Go: Code lens" })
+                vim.keymap.set("n", "<leader>glt", "<cmd>GoLint<CR>", { desc = "Go: Lint" })
             end
-
-            -- Code actions
-            map("n", "<leader>gfs", "<cmd>GoFillStruct<CR>", "Fill struct")
-            map("n", "<leader>gfp", "<cmd>GoFixPlurals<CR>", "Fix plurals")
-            map("n", "<leader>gat", "<cmd>GoAddTag<CR>", "Add tags to struct")
-            map("n", "<leader>grt", "<cmd>GoRmTag<CR>", "Remove tags from struct")
-            map("n", "<leader>gct", "<cmd>GoClearTag<CR>", "Clear tags from struct")
-            map("n", "<leader>gim", "<cmd>GoImpl<CR>", "Generate interface implementation")
-
-            -- Testing
-            map("n", "<leader>gte", "<cmd>GoTest<CR>", "Run tests")
-            map("n", "<leader>gtf", "<cmd>GoTestFunc<CR>", "Test function")
-            map("n", "<leader>gtc", "<cmd>GoTestCoverage<CR>", "Test coverage")
-
-            -- Alternate between test and implementation
-            map("n", "<leader>ga", "<cmd>GoAlt<CR>", "Go to alternate file")
-            map("n", "<leader>gat", "<cmd>GoAltV<CR>", "Go to alternate file in vsplit")
-
-            -- Code info and navigation
-            map("n", "<leader>gd", "<cmd>GoDef<CR>", "Go to definition")
-            map("n", "<leader>gdc", "<cmd>GoDefCallback<CR>", "Go to definition callback")
-            map("n", "<leader>gr", "<cmd>GoRename<CR>", "Rename symbol")
-            map("n", "<leader>gi", "<cmd>GoInfo<CR>", "Show symbol info")
-
-            -- Debug
-            map("n", "<leader>gdb", "<cmd>GoDebug<CR>", "Start debugging")
-            map("n", "<leader>gdt", "<cmd>GoDebugTest<CR>", "Debug test")
-            map("n", "<leader>gdB", "<cmd>GoBreakpoint<CR>", "Toggle breakpoint")
-        end
-    },
-    {
-        "leoluz/nvim-dap-go",
-        dependencies = {
-            "mfussenegger/nvim-dap",
-        },
-        config = function()
-            require("dap-go").setup({
-                dap_configurations = {
-                    {
-                        type = "go",
-                        name = "Debug Package",
-                        request = "launch",
-                        program = "${fileDirname}",
-                    },
-                    {
-                        type = "go",
-                        name = "Debug Test",
-                        request = "launch",
-                        mode = "test",
-                        program = "${fileDirname}",
-                    },
+            require("go").setup({
+                lsp_cfg = true,
+                lsp_on_attach = on_attach,
+                lsp_codelens = true,
+                lsp_inlay_hints = {
+                    enable = true,
+                    parameter_hints_prefix = "󰊕 ", -- Show parameter names
+                    other_hints_prefix = "=> ",   -- Show type hints
                 },
-                delve = {
-                    path = "dlv",
-                    initialize_timeout_sec = 20,
-                    port = "${port}",
+                gofmt = 'golines', -- Use golines for formatting
+                max_line_len = 120,
+                goimport = 'goimports', -- Use goimports
+                fillstruct = 'gopls',
+                test_runner = 'go',
+                test_open_cmd = 'edit',
+                dap_debug = true,
+                dap_debug_gui = true,
+                dap_debug_keymap = true,
+                dap_port = 38697,
+                icons = {
+                    breakpoint = '🔍',
+                    currentpos = '🏃',
+                },
+                floaterm = { position = 'center', width = 0.8, height = 0.8 },
+                trouble = true,
+            })
+            -- Configure gopls
+            require("lspconfig").gopls.setup({
+                settings = {
+                    gopls = {
+                        analyses = {
+                            nilness = true,
+                            unusedparams = true,
+                            unusedwrite = true,
+                            useany = true,
+                        },
+                        experimentalPostfixCompletions = true,
+                        gofumpt = true,
+                        staticcheck = true,
+                        usePlaceholders = true,
+                        codelenses = {
+                            gc_details = true,
+                            generate = true,
+                            regenerate_cgo = true,
+                            run_govulncheck = true,
+                            test = true,
+                            tidy = true,
+                            upgrade_dependency = true,
+                            vendor = true,
+                        },
+                        hints = {
+                            assignVariableTypes = true,
+                            compositeLiteralFields = true,
+                            compositeLiteralTypes = true,
+                            constantValues = true,
+                            functionTypeParameters = true,
+                            parameterNames = true,
+                            rangeVariableTypes = true,
+                        },
+                        semanticTokens = true,
+                    },
                 },
             })
         end,
+        event = { "CmdlineEnter" },
+        ft = { "go", "gomod", "gowork", "gotmpl" },
+        build = function()
+            vim.cmd("silent UpdateRemotePlugins")
+        end
     },
     {
         "olexsmir/gopher.nvim",
@@ -173,8 +115,31 @@ return {
                     gotests = "gotests",
                     impl = "impl",
                     iferr = "iferr",
+                    comment = "comment",
                 },
             })
         end,
-    }
+    },
+    {
+        "stevearc/conform.nvim",
+        opts = function(_, opts)
+            table.insert(opts.formatters_by_ft, {
+                go = { "gofmt", "goimports" },
+            })
+        end,
+    },
+    {
+        "mfussenegger/nvim-lint",
+        config = function()
+            require("lint").linters_by_ft = {
+                go = { "golangcilint" }
+            }
+        end,
+    },
+    {
+        "leoluz/nvim-dap-go",
+        config = function()
+            require("dap-go").setup()
+        end,
+    },
 }

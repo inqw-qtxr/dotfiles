@@ -1,50 +1,61 @@
 return {
+    -- Ruby/Rails Development
+
+    { "tpope/vim-rails", dependencies = { "tpope/vim-bundler", "tpope/vim-projectionist" } },
+    { "RRethy/nvim-treesitter-endwise" },
+    { "tpope/vim-rake" },
+    { "tpope/vim-bundler" },
+    { "slim-template/vim-slim" },
+
+    { "windwp/nvim-ts-autotag" },
+    { "MunifTanjim/prettier.nvim" },
     {
-        "tpope/vim-rails",
-        dependencies = {
-            "tpope/vim-bundler",
-            "tpope/vim-projectionist"
+        "williamboman/mason.nvim",
+        opts = {
+            ensure_installed = {
+                "solargraph", -- Ruby LSP
+                "rubocop",    -- Ruby linter
+                "standardrb", -- Ruby formatter
+            },
         },
+    },
+    {
+        "neovim/nvim-lspconfig",
         config = function()
-            -- Rails specific keymaps
-            vim.keymap.set("n", "<leader>ra", ":A<CR>", { desc = "Alternate file" })
-            vim.keymap.set("n", "<leader>rm", ":Emodel<CR>", { desc = "Jump to model" })
-            vim.keymap.set("n", "<leader>rc", ":Econtroller<CR>", { desc = "Jump to controller" })
-            vim.keymap.set("n", "<leader>rv", ":Eview<CR>", { desc = "Jump to view" })
-            vim.keymap.set("n", "<leader>rh", ":Ehelper<CR>", { desc = "Jump to helper" })
-            vim.keymap.set("n", "<leader>rt", ":Etest<CR>", { desc = "Jump to test" })
-        end,
-    },
-    {
-        "tpope/vim-rails",
-        dependencies = { "tpope/vim-bundler", "tpope/vim-projectionist" },
-    },
-    {
-        "RRethy/nvim-treesitter-endwise",
-        config = function()
-            require("nvim-treesitter-endwise")
-        end,
-    },
-    {
-        "tpope/vim-rake",
-    },
-    {
-        "tpope/vim-bundler",
-    },
-    {
-        "slim-template/vim-slim",
-    },
-    {
-        "rcarriga/nvim-notify",
-        config = function()
-            -- Configure Ruby/Rails specific notifications
-            vim.notify = require("notify")
-            vim.notify.setup({
-                stages = "fade",
-                timeout = 3000,
-                background_colour = "#000000",
+            local lspconfig = require("lspconfig")
+            lspconfig.solargraph.setup({
+                cmd = { "solargraph", "stdio" },
+                filetypes = { "ruby" },
+                root_dir = lspconfig.util.root_pattern("Gemfile", ".git", "."),
+                settings = {
+                    solargraph = {
+                        autoformat = true,
+                        completion = true,
+                        diagnostic = true,
+                        folding = true,
+                        references = true,
+                        rename = true,
+                        symbols = true,
+                    },
+                },
             })
         end,
     },
+    {
+        "stevearc/conform.nvim",
+        opts = function(_, opts)
+            table.insert(opts.formatters_by_ft, {
+                ruby = { "standardrb", "rubocop" },
+            })
+        end,
+    },
+    {
+        "mfussenegger/nvim-lint",
+        opts = function(_, opts)
+            table.insert(opts.linters_by_ft, {
+                ruby = { "rubocop" },
+            })
+        end,
+    },
+    -- Add more Ruby/Rails specific configurations as needed
 }
-
