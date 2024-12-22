@@ -2,15 +2,35 @@ return {
     {
         "williamboman/mason.nvim",
         cmd = "Mason",
-        keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
         build = ":MasonUpdate",
+        keys = { 
+            { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } 
+        },
         opts = {
             ensure_installed = {
-                "pyright", -- Python LSP
-                "black", -- Python formatter
-                "ruff", -- Python linter
-                "debugpy", -- Python debugger
-                "jedi", -- Optional: Python completion engine
+                -- LSP
+                "pyright",          -- Static type checker
+                "ruff-lsp",        -- Fast linter/formatter
+                "python-lsp-server", -- Alternative full-featured LSP
+                -- DAP
+                "debugpy",         -- Debug adapter
+                -- Linters
+                "ruff",            -- Fast linter
+                "mypy",            -- Static type checker
+                -- Formatters
+                "black",           -- Code formatter
+                "isort",           -- Import formatter
+                -- Extra tools
+                "pytest",          -- Testing
+                "python-rope",     -- Refactoring library
+            },
+            ui = {
+                border = "rounded",
+                icons = {
+                    package_installed = "✓",
+                    package_pending = "➜",
+                    package_uninstalled = "✗"
+                }
             },
         },
         config = function(_, opts)
@@ -43,21 +63,58 @@ return {
                                 autoSearchPaths = true,
                                 useLibraryCodeForTypes = true,
                                 diagnosticMode = "workspace",
+                                -- Additional analysis settings
+                                autoImportCompletions = true,
+                                diagnosticSeverityOverrides = {
+                                    reportUnusedVariable = "warning",
+                                    reportGeneralTypeIssues = "warning",
+                                },
+                                -- Environment settings
+                                venvPath = ".",
+                                pythonPath = nil, -- Will be automatically detected
                             },
                         },
                     },
                 },
-                jedi = {}, -- Optionally configure jedi here
+                ruff_lsp = {
+                    init_options = {
+                        settings = {
+                            -- Ruff settings
+                            args = {},
+                        }
+                    }
+                },
+                pylsp = {
+                    settings = {
+                        pylsp = {
+                            plugins = {
+                                -- Plugin settings
+                                pycodestyle = { enabled = false },
+                                mccabe = { enabled = false },
+                                pyflakes = { enabled = false },
+                                pylint = { enabled = false },
+                                yapf = { enabled = false },
+                                autopep8 = { enabled = false },
+                                -- Enable rope for refactoring
+                                rope_completion = { enabled = true },
+                                rope_autoimport = { enabled = true },
+                            }
+                        }
+                    }
+                }
+            },
+            setup = {
+                pyright = function(_, opts)
+                    require("lspconfig").pyright.setup(opts)
+                end,
+                ruff_lsp = function(_, opts)
+                    require("lspconfig").ruff_lsp.setup(opts)
+                end,
+                pylsp = function(_, opts)
+                    require("lspconfig").pylsp.setup(opts)
+                end,
             },
         },
-        config = function(_, opts)
-            local lspconfig = require("lspconfig")
-            lspconfig.pyright.setup(opts.servers.pyright)
-            -- Optionally set up jedi if configured
-            if opts.servers.jedi then
-                lspconfig.jedi.setup(opts.servers.jedi)
-            end
-        end,
     },
     {
         "mfussenegger/nvim-dap-python",
@@ -65,100 +122,111 @@ return {
             "mfussenegger/nvim-dap",
             "rcarriga/nvim-dap-ui",
         },
+        keys = {
+            { 
+                "<leader>dpr", 
+                function() require("dap-python").test_method() end, 
+                desc = "Debug Python Test Method" 
+            },
+            { 
+                "<leader>dpc", 
+                function() require("dap-python").test_class() end, 
+                desc = "Debug Python Test Class" 
+            },
+            { 
+                "<leader>dps", 
+                function() require("dap-python").debug_selection() end, 
+                desc = "Debug Python Selection" 
+            },
+            { 
+                "<leader>dpd", 
+                function() 
+                    require("dap").continue({
+                        type = "python",
+                        request = "launch",
+                        program = "${workspaceFolder}/manage.py",
+                        args = { "runserver" },
+                        django = true,
+                        justMyCode = false,
+                    })
+                end, 
+                desc = "Debug Django Server" 
+            },
+            { 
+                "<leader>dpf", 
+                function() 
+                    require("dap").continue({
+                        type = "python",
+                        request = "launch",
+                        module = "flask",
+                        args = { "run", "--no-debugger", "--no-reload" },
+                        env = {
+                            FLASK_APP = "${workspaceFolder}/app.py",
+                            FLASK_ENV = "development",
+                        },
+                        justMyCode = false,
+                    })
+                end, 
+                desc = "Debug Flask Server" 
+            },
+        },
         config = function()
-            local mason_registry = require("mason-registry")
-            local debugpy_path
-            if mason_registry.is_installed("debugpy") then
-                debugpy_path = mason_registry.get_package("debugpy"):get_install_path()
-                require("dap-python").setup(debugpy_path .. "/venv/bin/python")
-                
-                -- Configurations for pytest
-                require("dap-python").test_runner = "pytest"
-                
-                -- Configurations for Django and Flask
-                require("dap").configurations.python = {
-                    {
-                        type = "python",
-                        request = "launch",
-                        name = "Django Runserver",
-                        program = "${workspaceFolder}/manage.py",
-                        args = { "runserver" },
-                        django = true,
-                        justMyCode = false,
+            local path = require("mason-registry").get_package("debugpy"):get_install_path()
+            require("dap-python").setup(path .. "/venv/bin/python")
+            require("dap-python").test_runner = "pytest"
+
+            -- Additional configurations
+            local dap = require("dap")
+            dap.configurations.python = vim.list_extend(dap.configurations.python or {}, {
+                {
+                    type = "python",
+                    request = "launch",
+                    name = "FastAPI",
+                    module = "uvicorn",
+                    args = {
+                        "main:app",
+                        "--reload",
                     },
-                    {
-                        type = "python",
-                        request = "launch",
-                        name = "Flask Run",
-                        module = "flask",
-                        args = {
-                            "run",
-                            "--no-debugger",
-                            "--no-reload",
-                        },
-                        env = {
-                            FLASK_APP = "${workspaceFolder}/app.py",
-                            FLASK_ENV = "development",
-                        },
-                        justMyCode = false,
-                    },
-                }
-                
-                -- Keymaps
-                vim.keymap.set("n", "<leader>dpr", function()
-                    require("dap-python").test_method()
-                end, { desc = "Debug Python Test Method" })
-                vim.keymap.set("n", "<leader>dpc", function()
-                    require("dap-python").test_class()
-                end, { desc = "Debug Python Test Class" })
-                vim.keymap.set("n", "<leader>dps", function()
-                    require('dap-python').debug_selection()
-                end, { desc = "Debug Python Selection" })
-                vim.keymap.set("n", "<leader>dpd", function()
-                    require("dap").continue({
-                        type = "python",
-                        request = "launch",
-                        program = "${workspaceFolder}/manage.py",
-                        args = { "runserver" },
-                        django = true,
-                        justMyCode = false,
-                    })
-                end, { desc = "Debug Django Runserver" })
-                vim.keymap.set("n", "<leader>dpf", function()
-                    require("dap").continue({
-                        type = "python",
-                        request = "launch",
-                        module = "flask",
-                        args = {
-                            "run",
-                            "--no-debugger",
-                            "--no-reload",
-                        },
-                        env = {
-                            FLASK_APP = "${workspaceFolder}/app.py",
-                            FLASK_ENV = "development",
-                        },
-                        justMyCode = false,
-                    })
-                end, { desc = "Debug Flask Run" })
-            else
-                vim.notify("debugpy is not installed. Please run :Mason and install it.", vim.log.levels.WARN)
-            end
+                    justMyCode = false,
+                },
+                {
+                    type = "python",
+                    request = "launch",
+                    name = "Python: Current File",
+                    program = "${file}",
+                    console = "integratedTerminal",
+                },
+                {
+                    type = "python",
+                    request = "launch",
+                    name = "Python: Django Tests",
+                    program = "${workspaceFolder}/manage.py",
+                    args = { "test" },
+                    django = true,
+                    justMyCode = false,
+                },
+            })
         end,
     },
     {
         "nvim-treesitter/nvim-treesitter",
         opts = {
-            ensure_installed = {
-                "python",
-            },
+            ensure_installed = { "python", "ninja", "rst", "toml" },
         },
     },
     {
         "stevearc/conform.nvim",
         opts = {
             formatters_by_ft = {
-                python = { "black", "ruff" },
+                python = {
+                    "isort",   -- Handle imports
+                    "black",   -- Code formatting
+                    "ruff",    -- Fast formatting for remaining issues
+                },
+            },
+            format_on_save = {
+                timeout_ms = 500,
+                lsp_fallback = true,
             },
         },
     },
@@ -166,7 +234,26 @@ return {
         "mfussenegger/nvim-lint",
         opts = {
             linters_by_ft = {
-                python = { "ruff" },
+                python = {
+                    "ruff",
+                    "mypy",
+                },
+            },
+            -- Configure linters
+            linters = {
+                mypy = {
+                    args = {
+                        "--ignore-missing-imports",
+                        "--disallow-untyped-defs",
+                        "--check-untyped-defs",
+                        "--disallow-any-generics",
+                        "--no-implicit-optional",
+                        "--warn-redundant-casts",
+                        "--warn-unused-ignores",
+                        "--warn-return-any",
+                        "--warn-unreachable",
+                    },
+                },
             },
         },
     },

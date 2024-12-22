@@ -1,30 +1,136 @@
 # Neovim Configuration
 
-A comprehensive Neovim configuration with support for multiple languages and modern IDE features.
+A modern, feature-rich Neovim configuration focused on providing a complete IDE-like experience. This configuration includes support for multiple languages, debugging, Git integration, and various quality-of-life improvements.
+
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Plugin Overview](#plugin-overview)
+- [Keybindings](#keybindings)
+  - [General](#general)
+  - [LSP & Code Navigation](#lsp--code-navigation)
+  - [File Navigation](#file-navigation)
+  - [Git Integration](#git-integration)
+  - [Terminal Integration](#terminal-integration)
+  - [Language Specific](#language-specific)
+  - [Debugging](#debugging)
+  - [Completion & Snippets](#completion--snippets)
+  - [Code Formatting & Comments](#code-formatting--comments)
+  - [Database Operations](#database-operations)
+  - [Text Manipulation](#text-manipulation)
+
+## ✨ Features
+
+- Modern LSP integration with rich completion support
+- Integrated debugging support
+- Git integration
+- Fuzzy finding with Telescope
+- File tree navigation
+- Terminal integration
+- Language-specific enhancements for:
+  - TypeScript/JavaScript
+  - Python
+  - Go
+  - Ruby/Rails
+  - C/C++
+  - Lua
+  - and more...
+
+## 📦 Requirements
+
+- Neovim >= 0.9.0
+- Git
+- A C compiler (for tree-sitter)
+- Node.js (for LSP servers)
+- ripgrep (for Telescope)
+- A Nerd Font (for icons)
+
+## 🚀 Installation
+
+1. Backup your existing Neovim configuration:
+```bash
+mv ~/.config/nvim ~/.config/nvim.bak
+```
+
+2. Clone this configuration:
+```bash
+git clone https://github.com/yourusername/nvim-config.git ~/.config/nvim
+```
+
+3. Start Neovim - plugins will be automatically installed on first launch.
+
+## 🔌 Plugin Overview
+
+### Core Plugins
+
+- **lazy.nvim**: Plugin manager
+- **nvim-lspconfig**: LSP configuration
+- **nvim-treesitter**: Advanced syntax highlighting
+- **telescope.nvim**: Fuzzy finder and picker
+- **nvim-cmp**: Completion engine
+- **mason.nvim**: LSP/DAP/Linter manager
+
+### Language Support
+
+- **TypeScript**
+  - typescript-tools.nvim: Enhanced TypeScript support
+  - prettier.nvim: Code formatting
+
+- **Python**
+  - nvim-dap-python: Debugging support
+  - black: Code formatting
+  - ruff: Linting
+
+- **Go**
+  - go.nvim: Enhanced Go support
+  - gofumpt: Code formatting
+  - delve: Debugging
+
+- **Ruby**
+  - vim-rails: Rails support
+  - vim-ruby: Ruby support
+  - solargraph: Language server
+
+### Editor Enhancement
+
+- **nvim-tree.lua**: File explorer
+- **barbar.nvim**: Buffer management
+- **gitsigns.nvim**: Git integration
+- **toggleterm.nvim**: Terminal integration
+- **nvim-autopairs**: Automatic bracket pairs
+- **Comment.nvim**: Enhanced commenting
+- **nvim-surround**: Surround text operations
+- **leap.nvim**: Quick navigation
+- **harpoon**: File marking and quick navigation
+
+### Visual Enhancement
+
+- **gruvbox.nvim**: Color scheme
+- **nvim-web-devicons**: File icons
+- **lualine.nvim**: Status line
+- **nvim-notify**: Notification manager
+
+### Tools Integration
+
+- **nvim-dap**: Debug adapter protocol
+- **trouble.nvim**: Problem lists
+- **telescope.nvim**: Fuzzy finder
+- **vim-dadbod**: Database integration
+
+## ⌨️ Keybindings
 
 > Leader key is set to `\`
 
-## Table of Contents
+### General
 
-- [Core Navigation & Basic Operations](#core-navigation--basic-operations)
-- [LSP Features](#lsp-features)
-- [File Navigation & Search](#file-navigation--search)
-- [Git Integration](#git-integration)
-- [Terminal Integration](#terminal-integration)
-- [Language Specific Features](#language-specific-features)
-- [Debug Controls](#debug-controls)
-- [AI Assistant Integration](#ai-assistant-integration)
-- [Code Formatting & Comments](#code-formatting--comments)
-- [Database Operations](#database-operations)
-- [Text Manipulation](#text-manipulation)
+#### Editor Controls
+- `<leader>w` - Save file
+- `<leader>q` - Quit
+- `<leader>sr` - Reload configuration
 
-## Core Navigation & Basic Operations
-
-### Clipboard Operations
-- `<leader>y` - Yank to system clipboard (normal and visual mode)
-- `gV` - Select last inserted text
-
-### Buffer Navigation (barbar.nvim)
+#### Buffer Navigation
 - `<A-,>` - Previous buffer
 - `<A-.>` - Next buffer
 - `<A-<>` - Move buffer left
@@ -32,232 +138,151 @@ A comprehensive Neovim configuration with support for multiple languages and mod
 - `<A-1-9>` - Go to buffer 1-9
 - `<A-0>` - Go to last buffer
 - `<A-c>` - Close buffer
-- `<leader>bp` - Pin/unpin buffer
-- `<leader>bc` - Close buffer
-- `<leader>bx` - Close buffer
-- `<leader>bX` - Close all but current/pinned
-- `<leader>bL` - Close all to the left
-- `<leader>bR` - Close all to the right
-- `<leader>bb` - Order by buffer number
-- `<leader>bd` - Order by directory
-- `<leader>bl` - Order by language
-- `<leader>bw` - Order by window number
 
-### Config Reload
-- `<leader>r` - Reload configuration
+### LSP & Code Navigation
 
-## LSP Features
+#### Code Navigation
+- `gd` - Go to definition
+- `gD` - Go to declaration
+- `gr` - Find references
+- `gi` - Go to implementation
+- `K` - Show hover documentation
+- `<leader>rn` - Rename symbol
+- `<leader>ca` - Code actions
+- `<leader>D` - Type definition
 
-### Code Navigation
-- `K` - Hover Documentation
-- `gd` - Go to Definition
-- `gD` - Go to Declaration
-- `gi` - Go to Implementation
-- `gr` - Find References
-- `<leader>rn` - Rename Symbol
-- `<leader>ca` - Code Actions
-- `<leader>D` - Type Definition
-- `<leader>ds` - Document Symbols
-- `<leader>ws` - Workspace Symbols
+#### Diagnostics
+- `[d` - Previous diagnostic
+- `]d` - Next diagnostic
+- `<leader>e` - Show diagnostic in float
+- `<leader>q` - Send diagnostics to quickfix
 
-### Diagnostics
-- `[d` - Previous Diagnostic
-- `]d` - Next Diagnostic
-- `<leader>e` - Float Diagnostic
-- `<leader>q` - Set Diagnostic to Location List
+### File Navigation
 
-### Code Completion
-- `<C-Space>` - Complete
-- `<C-b>` - Scroll docs up
-- `<C-f>` - Scroll docs down
-- `<Tab>` - Next item
-- `<S-Tab>` - Previous item
-- `<CR>` - Confirm selection
-
-## File Navigation & Search
-
-### File Explorer (NvimTree)
-- `<leader>E` - Toggle file explorer
-- `<leader>F` - Focus file explorer
-
-### Telescope
+#### Telescope
 - `<leader>ff` - Find files
 - `<leader>fg` - Live grep
-- `<leader>fb` - File browser
-- `<leader>fr` - Recent files (Frecency)
+- `<leader>fb` - Browse files
+- `<leader>fr` - Recent files
 - `<leader>fh` - Help tags
-- `<leader>bb` - List buffers
+- `<leader>fs` - Find symbols
 
-#### Git Integration with Telescope
-- `<leader>gf` - Git files
-- `<leader>gc` - Git commits
-- `<leader>gb` - Git branches
-- `<leader>gs` - Git status
-- `<leader>gL` - Git branch diff
-- `<leader>gl` - Git commit diff
+#### NvimTree
+- `<leader>E` - Toggle file explorer
+- `<leader>ef` - Focus current file
+- `<leader>ec` - Collapse file explorer
 
-### Quick File Access (Harpoon)
+#### Harpoon
 - `<leader>ha` - Add file to harpoon
-- `<leader>he` - Show harpoon menu
-- `<C-h>` - Navigate to harpoon 1
-- `<C-j>` - Navigate to harpoon 2
-- `<C-k>` - Navigate to harpoon 3
-- `<C-l>` - Navigate to harpoon 4
+- `<leader>he` - Toggle quick menu
+- `<C-h>` - Navigate to file 1
+- `<C-j>` - Navigate to file 2
+- `<C-k>` - Navigate to file 3
+- `<C-l>` - Navigate to file 4
 
-### Quick Movement (Leap)
-- `s` - Leap forward to
-- `S` - Leap backward to
+### Git Integration
 
-## Git Integration (Gitsigns)
-
-### Navigation
+#### Gitsigns
 - `]c` - Next hunk
 - `[c` - Previous hunk
-
-### Actions
 - `<leader>hs` - Stage hunk
 - `<leader>hr` - Reset hunk
-- `<leader>hS` - Stage buffer
-- `<leader>hu` - Undo stage hunk
-- `<leader>hR` - Reset buffer
-- `<leader>hp` - Preview hunk
 - `<leader>hb` - Blame line
-- `<leader>tb` - Toggle current line blame
+- `<leader>hp` - Preview hunk
 - `<leader>hd` - Diff this
-- `<leader>hD` - Diff against ~
-- `<leader>td` - Toggle deleted
 
-### Text Objects
-- `ih` - Select hunk
+#### Git Commands (Telescope)
+- `<leader>gc` - Git commits
+- `<leader>gf` - Git files
+- `<leader>gb` - Git branches
+- `<leader>gs` - Git status
 
-## Terminal Integration (Toggleterm)
+### Terminal Integration
 
-### Terminal Controls
 - `<C-\>` - Toggle terminal
 - `<leader>tt` - Toggle terminal
 - `<leader>tg` - Toggle lazygit
 - `<leader>tn` - Toggle node REPL
 - `<leader>tp` - Toggle python REPL
+- `<leader>th` - Toggle horizontal terminal
+- `<leader>tv` - Toggle vertical terminal
 
-### Terminal Navigation
-- `<esc>` - Exit terminal mode
-- `jk` - Exit terminal mode
-- `<C-h/j/k/l>` - Navigate between windows in terminal
+### Language Specific
 
-## Language Specific Features
-
-### TypeScript/JavaScript
+#### TypeScript/JavaScript
 - `<leader>tsi` - Organize imports
 - `<leader>tsa` - Add missing imports
 - `<leader>tsf` - Fix all
 - `<leader>tsr` - Rename file
 - `<leader>tsd` - Go to source definition
 
-### Python
-- `<leader>pt` - Run current Python file
-- `<leader>dpr` - Debug Python test method
-- `<leader>dpc` - Debug Python test class
-- `<leader>dps` - Debug Python selection
-- `<leader>dpd` - Debug Django runserver
-- `<leader>dpf` - Debug Flask run
+#### Python
+- `<leader>pt` - Run current file
+- `<leader>dpr` - Debug test method
+- `<leader>dpc` - Debug test class
+- `<leader>dps` - Debug selection
 
-### Go
-- `<leader>gs` - Add tags
-- `<leader>gr` - Remove tags
-- `<leader>gd` - Go to definition
-- `<leader>gt` - Go to declaration
+#### Go
+- `<leader>gr` - Run
+- `<leader>gt` - Test
 - `<leader>gi` - Implement interface
-- `<leader>ge` - Add if err check
-- `<leader>gc` - Comment
-- `<leader>gT` - Generate function tests
-- `<leader>gsj` - Add json tags
-- `<leader>gsy` - Add yaml tags
-- `<leader>gt` - Run tests
-- `<leader>gtf` - Test function
-- `<leader>gT` - Test file
-- `<leader>gfi` - Fill struct
-- `<leader>gat` - Generate test for function
-- `<leader>gal` - Code lens
-- `<leader>glt` - Lint
+- `<leader>gf` - Fill struct
 
-### Ruby/Rails
-- `<leader>rs` - Run Rails spec
-- `<leader>rm` - Rails model
-- `<leader>rc` - Rails controller
-- `<leader>rv` - Rails view
-- `<leader>rr` - Rails routes
-- `<leader>rl` - Rails logs
-- `<leader>rg` - Rails generate
-- `<leader>rmig` - Rails migrations
+#### Ruby/Rails
+- `<leader>Ra` - Rails actions
+- `<leader>Rc` - Rails controller
+- `<leader>Rm` - Rails model
+- `<leader>Rv` - Rails view
 
-### C/C++
-- `<leader>cc` - Compile and run C++ file
-- `<leader>cd` - Compile and run C file
+### Debugging
 
-## Debug Controls (DAP)
 - `<leader>dc` - Continue
 - `<leader>do` - Step over
 - `<leader>di` - Step into
 - `<leader>dt` - Step out
 - `<leader>db` - Toggle breakpoint
 - `<leader>dB` - Set conditional breakpoint
-- `<leader>dr` - Open REPL
 - `<leader>dl` - Run last
+- `<leader>dr` - Open REPL
 
-## AI Assistant Integration (Supermaven)
+### Completion & Snippets
 
-### Suggestions
-- `<Tab>` - Accept suggestion
-- `<C-]>` - Next suggestion
-- `<C-[>` - Previous suggestion
-- `<C-\>` - Dismiss suggestion
-- `<C-p>` - Next suggestion
-- `<C-o>` - Previous suggestion
-- `<C-u>` - Dismiss suggestion
+- `<C-Space>` - Trigger completion
+- `<C-n>` - Next completion item
+- `<C-p>` - Previous completion item
+- `<C-f>` - Scroll docs forward
+- `<C-b>` - Scroll docs backward
+- `<CR>` - Confirm completion
 
-### Panel Controls
-- `<leader>sm` - Start Supermaven
-- `<leader>sd` - Stop Supermaven
-- `<leader>se` - Toggle Supermaven
+### Code Formatting & Comments
 
-## Code Formatting & Comments
-
-### Comments (Comment.nvim)
 - `gcc` - Toggle line comment
 - `gbc` - Toggle block comment
-- `gc` - Toggle line comment (with motion)
-- `gb` - Toggle block comment (with motion)
-- `gcO` - Comment above
-- `gco` - Comment below
-- `gcA` - Comment at end of line
-- `<leader>/` - Toggle comment line/selection
+- `<leader>/` - Toggle comment
+- `<leader>cf` - Format code
 
-### Formatting
-- `<leader>mp` - Format file or range (in visual mode)
+### Database Operations
 
-### Linting
-- `<leader>l` - Trigger linting for current file
+- `<leader>db` - Toggle database UI
+- `<leader>dba` - Add connection
+- `<leader>dbf` - Find buffer
+- `<leader>dbl` - Last buffer
 
-### Treesitter Context
-- `[c` - Go to context
-- `<leader>tc` - Toggle treesitter context
+### Text Manipulation
 
-## Database Operations (vim-dadbod)
-- `<leader>db` - Toggle DBUI
-- `<leader>db+` - Add DB Connection
-- `<leader>dbr` - DBUI Refresh
-- `<leader>dbf` - DBUI Find Buffer
-- `<leader>dbl` - DBUI Last Buffer
-
-## Text Manipulation
-
-### Surround Operations (nvim-surround)
+#### Surround Operations
 - `ys{motion}{char}` - Add surround
-- `yss{char}` - Add surround to line
 - `ds{char}` - Delete surround
 - `cs{target}{replacement}` - Change surround
-- Visual Mode:
-  - `S{char}` - Surround selection
-- Insert Mode:
-  - `<C-g>s` - Add surround
-  - `<C-g>S` - Add surround on new lines
+
+#### Quick Movement (Leap)
+- `s` - Leap forward
+- `S` - Leap backward
+- `gs` - Leap from windows
+
+## 📝 Notes
+
+- The configuration auto-installs plugins on first launch
+- Custom configurations can be added to `lua/custom/init.lua`
+- LSP servers are automatically installed via Mason
+- Format on save is enabled by default for supported languages

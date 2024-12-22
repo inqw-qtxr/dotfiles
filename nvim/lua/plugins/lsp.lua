@@ -3,99 +3,145 @@ return {
         "neovim/nvim-lspconfig",
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
-            "folke/neodev.nvim", -- Adds support for Neovim Lua API
-            "hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
+            "folke/neodev.nvim",
+            "hrsh7th/cmp-nvim-lsp",
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
-            "j-hui/fidget.nvim", -- Standalone UI for LSP progress
+            "j-hui/fidget.nvim",
+            "smjonas/inc-rename.nvim",  -- Better rename UI
+            "ray-x/lsp_signature.nvim",  -- Better signature help
+            "folke/trouble.nvim",        -- Better diagnostics list
         },
         config = function()
-            -- Setup neovim lua configuration
-            require("neodev").setup()
+            -- Setup better rename UI
+            require("inc_rename").setup({
+                input_buffer_type = "dressing",
+            })
 
-            -- Setup fidget to show LSP progress
+            -- Setup LSP signature
+            require("lsp_signature").setup({
+                bind = true,
+                handler_opts = {
+                    border = "rounded",
+                },
+                floating_window = false,  -- Use virtual text
+                hint_prefix = "󰏚 ",
+            })
+
+            -- Setup neovim lua configuration
+            require("neodev").setup({
+                library = {
+                    plugins = { "nvim-dap-ui" }, -- Add DAP support
+                    types = true,
+                },
+            })
+
+            -- Setup fidget with better styling
             require("fidget").setup({
                 progress = {
                     suppress_on_insert = false,
                     ignore_done_already = false,
                     ignore_empty_message = false,
+                    display = {
+                        render_limit = 16,
+                        done_ttl = 3,
+                        progress_ttl = math.huge,
+                    },
                 },
                 notification = {
                     window = {
                         winblend = 0,
+                        border = "rounded",
+                        relative = "editor",
                     },
                 },
             })
 
-            -- Global LSP mappings
-            vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'Hover Documentation' })
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'Go to Definition' })
-            vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = 'Go to Declaration' })
-            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { desc = 'Go to Implementation' })
-            vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = 'Find References' })
-            vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { desc = 'Rename Symbol' })
-            vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = 'Code Actions' })
-            vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'Type Definition' })
-            vim.keymap.set('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = 'Document Symbols' })
-            vim.keymap.set('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = 'Workspace Symbols' })
+            -- Enhanced LSP mappings with better descriptions
+            local function map(mode, lhs, rhs, opts)
+                local options = { noremap = true, silent = true }
+                if opts then options = vim.tbl_extend("force", options, opts) end
+                vim.keymap.set(mode, lhs, rhs, options)
+            end
 
-            -- Diagnostic keymaps
-            vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
-            vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
-            vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Float Diagnostic' })
-            vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Set Diagnostic to Location List' })
+            -- Navigation
+            map('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP: Go to Definition' })
+            map('n', 'gD', vim.lsp.buf.declaration, { desc = 'LSP: Go to Declaration' })
+            map('n', 'gi', vim.lsp.buf.implementation, { desc = 'LSP: Go to Implementation' })
+            map('n', 'gr', vim.lsp.buf.references, { desc = 'LSP: Find References' })
+            map('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'LSP: Type Definition' })
 
-            -- LSP handlers configuration
-            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-                vim.lsp.handlers.hover, {
-                    border = "rounded",
-                    width = 60,
-                }
-            )
+            -- Documentation
+            map('n', 'K', vim.lsp.buf.hover, { desc = 'LSP: Hover Documentation' })
+            map('n', '<C-k>', vim.lsp.buf.signature_help, { desc = 'LSP: Signature Help' })
 
-            vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-                vim.lsp.handlers.signature_help, {
-                    border = "rounded",
-                    width = 60,
-                }
-            )
+            -- Workspace
+            map('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, { desc = 'LSP: Add Workspace Folder' })
+            map('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, { desc = 'LSP: Remove Workspace Folder' })
+            map('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, { desc = 'LSP: List Workspace Folders' })
 
-            -- Diagnostic configuration
+            -- Code Actions
+            map('n', '<leader>rn', function() return ':IncRename ' .. vim.fn.expand('<cword>') end, { desc = 'LSP: Rename Symbol', expr = true })
+            map('n', '<leader>ca', vim.lsp.buf.code_action, { desc = 'LSP: Code Actions' })
+            map('n', '<leader>cf', function() vim.lsp.buf.format({ async = true }) end, { desc = 'LSP: Format Document' })
+
+            -- Symbols
+            map('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = 'LSP: Document Symbols' })
+            map('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = 'LSP: Workspace Symbols' })
+
+            -- Diagnostics navigation
+            map('n', '[d', vim.diagnostic.goto_prev, { desc = 'LSP: Previous Diagnostic' })
+            map('n', ']d', vim.diagnostic.goto_next, { desc = 'LSP: Next Diagnostic' })
+            map('n', '<leader>e', vim.diagnostic.open_float, { desc = 'LSP: Float Diagnostic' })
+            map('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'LSP: Set Diagnostic to Location List' })
+            map('n', '<leader>xx', '<cmd>TroubleToggle<cr>', { desc = 'LSP: Toggle Diagnostics Window' })
+
+            -- Enhanced LSP handlers
+            local float_config = {
+                border = "rounded",
+                max_width = 80,
+                max_height = 40,
+                focusable = false,
+                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                source = 'always',
+                prefix = ' ',
+                scope = 'cursor',
+            }
+
+            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, float_config)
+            vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, float_config)
+
+            -- Enhanced diagnostic configuration
             vim.diagnostic.config({
-                virtual_text = true,
-                signs = true,
-                update_in_insert = false,
-                underline = true,
-                severity_sort = true,
-                float = {
-                    border = 'rounded',
+                virtual_text = {
+                    prefix = '●',
                     source = 'always',
-                    header = '',
-                    prefix = '',
+                    spacing = 4,
                 },
+                float = float_config,
+                signs = true,
+                underline = true,
+                update_in_insert = false,
+                severity_sort = true,
             })
 
-            -- Set up signs
-            local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
+            -- Diagnostic signs with better icons
+            local signs = {
+                Error = " ",
+                Warn = " ",
+                Hint = "󰌵 ",
+                Info = " ",
+            }
+
             for type, icon in pairs(signs) do
                 local hl = "DiagnosticSign" .. type
                 vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
             end
-
-            -- LSP settings (show documentation in a fancy floating window)
-            local float_opts = {
-                focusable = false,
-                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-                border = 'rounded',
-                source = 'always',
-                prefix = ' ',
-            }
-
-            vim.diagnostic.config({ float = float_opts })
         end
     },
     {
         "hrsh7th/nvim-cmp",
+        event = { "InsertEnter", "CmdlineEnter" },
         dependencies = {
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
@@ -105,14 +151,29 @@ return {
             "L3MON4D3/LuaSnip",
             "saadparwaiz1/cmp_luasnip",
             "rafamadriz/friendly-snippets",
+            "onsails/lspkind.nvim",         -- Better completion icons
         },
         config = function()
             local cmp = require('cmp')
             local luasnip = require('luasnip')
+            local lspkind = require('lspkind')
 
+            -- Load VSCode-like snippets
             require("luasnip.loaders.from_vscode").lazy_load()
+            
+            -- Add custom snippets
+            luasnip.config.setup({
+                history = true,
+                updateevents = "TextChanged,TextChangedI",
+                enable_autosnippets = true,
+            })
 
             cmp.setup({
+                completion = {
+                    completeopt = 'menu,menuone,noinsert',
+                    autocomplete = false,  -- Disable automatic completion
+                    keyword_length = 1,
+                },
                 snippet = {
                     expand = function(args)
                         luasnip.lsp_expand(args.body)
@@ -123,7 +184,10 @@ return {
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-Space>'] = cmp.mapping.complete(),
                     ['<C-e>'] = cmp.mapping.abort(),
-                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    ['<CR>'] = cmp.mapping.confirm({
+                        behavior = cmp.ConfirmBehavior.Replace,
+                        select = true,
+                    }),
                     ['<Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
@@ -144,66 +208,56 @@ return {
                     end, { 'i', 's' }),
                 }),
                 sources = cmp.config.sources({
-                    { name = 'nvim_lsp' },
-                    { name = 'luasnip' },
-                    { name = 'buffer' },
-                    { name = 'path' },
-                    { name = 'nvim_lua' },
+                    { name = 'nvim_lsp', priority = 1000 },
+                    { name = 'luasnip', priority = 750 },
+                    { name = 'nvim_lua', priority = 500 },
+                    { name = 'path', priority = 250 },
+                    { name = 'buffer', priority = 100 },
                 }),
                 formatting = {
-                    format = function(entry, vim_item)
-                        -- Kind icons
-                        local kind_icons = {
-                            Text = "",
-                            Method = "󰆧",
-                            Function = "󰊕",
-                            Constructor = "",
-                            Field = "󰇽",
-                            Variable = "󰂡",
-                            Class = "󰠱",
-                            Interface = "",
-                            Module = "",
-                            Property = "󰜢",
-                            Unit = "",
-                            Value = "󰎠",
-                            Enum = "",
-                            Keyword = "󰌋",
-                            Snippet = "",
-                            Color = "󰏘",
-                            File = "󰈙",
-                            Reference = "",
-                            Folder = "󰉋",
-                            EnumMember = "",
-                            Constant = "󰏿",
-                            Struct = "",
-                            Event = "",
-                            Operator = "󰆕",
-                            TypeParameter = "󰅲",
-                        }
-                        vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
-                        return vim_item
-                    end
+                    format = lspkind.cmp_format({
+                        mode = 'symbol_text',
+                        maxwidth = 50,
+                        ellipsis_char = '...',
+                        before = function(entry, vim_item)
+                            vim_item.menu = ({
+                                nvim_lsp = "[LSP]",
+                                luasnip = "[Snippet]",
+                                buffer = "[Buffer]",
+                                path = "[Path]",
+                                nvim_lua = "[Lua]",
+                            })[entry.source.name]
+                            return vim_item
+                        end,
+                    }),
                 },
                 window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
+                    completion = cmp.config.window.bordered({
+                        winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+                    }),
+                    documentation = cmp.config.window.bordered({
+                        winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+                    }),
+                },
+                experimental = {
+                    ghost_text = true,
                 },
             })
 
-            -- Set up command-line completion
+            -- Set up enhanced command-line completion
             cmp.setup.cmdline(':', {
                 mapping = cmp.mapping.preset.cmdline(),
-                sources = cmp.config.sources({
-                    { name = 'path' },
-                    { name = 'cmdline' }
-                })
+                sources = {
+                    { name = 'path', priority = 500 },
+                    { name = 'cmdline', priority = 300 }
+                }
             })
 
-            -- Set up search completion
+            -- Set up enhanced search completion
             cmp.setup.cmdline('/', {
                 mapping = cmp.mapping.preset.cmdline(),
                 sources = {
-                    { name = 'buffer' }
+                    { name = 'buffer', priority = 500 }
                 }
             })
         end

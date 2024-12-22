@@ -10,6 +10,7 @@ return {
             bash = { "shellcheck" },
             zsh = { "shellcheck" },
             fish = { "shellcheck" },
+            go = { "golangcilint" },
         }
         
         -- Create an autocmd group for linting

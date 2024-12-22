@@ -15,26 +15,21 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugin Setup
 require("lazy").setup({
     -- Syntax Highlighting
--- Plugin Setup
-require("lazy").setup({
-    -- Syntax Highlighting
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-treesitter/playground" }, -- Additional Treesitter tools
 
-    -- Include the new Ruby configuration
+    -- Language Support
     { import = "plugins.ruby" },
     { "tpope/vim-rails" },
-
-    -- Include the new Go configuration
     { import = "plugins.go" },
-
-    -- Include the new C/C++ configuration
     { import = "plugins.cpp" },
 
-    -- Undo tree
+    -- Core Features
     { "mbbill/undotree" },
+    { "nvim-tree/nvim-tree.lua" },
+    { "github/copilot.vim" },
 
-    -- Telescope for file searching
+    -- Telescope and Dependencies
     {
         "nvim-telescope/telescope.nvim",
         dependencies = {
@@ -60,7 +55,7 @@ require("lazy").setup({
         end,
     },
 
-    -- Autopairs
+    -- Editor Enhancement
     {
         "windwp/nvim-autopairs",
         config = function()
@@ -68,16 +63,9 @@ require("lazy").setup({
         end,
     },
 
-    -- DAP (Debug Adapter Protocol)
+    -- Debugging
     { "mfussenegger/nvim-dap" },
-
-    -- Python Development
     { "mfussenegger/nvim-dap-python" },
-
-    -- Markdown Preview
-    { "iamcco/markdown-preview.nvim", build = function() vim.fn["mkdp#util#install"]() end },
-})
-    { "nvim-tree/nvim-tree.lua" },
 
     -- Git Integration
     { "lewis6991/gitsigns.nvim" },
@@ -85,7 +73,7 @@ require("lazy").setup({
     -- Testing
     { "vim-test/vim-test" },
 
-    -- Gruvbox Theme
+    -- Theme
     {
         "ellisonleao/gruvbox.nvim",
         priority = 1000,
@@ -108,7 +96,7 @@ require("lazy").setup({
                 invert_tabline = false,
                 invert_intend_guides = false,
                 inverse = true,
-                contrast = "",
+                contrast = "hard",
                 palette_overrides = {},
                 overrides = {},
                 dim_inactive = false,
@@ -117,10 +105,7 @@ require("lazy").setup({
         end,
     },
 
-    -- Supermaven
-    { "supermaven-inc/supermaven-nvim" },
-
--- Barbar
+    -- Buffer Management
     {
         'romgrk/barbar.nvim',
         dependencies = {
@@ -141,15 +126,6 @@ require("lazy").setup({
         },
     },
 
-    -- DAP (Debug Adapter Protocol)
-    -- DAP (Debug Adapter Protocol)
-    { "mfussenegger/nvim-dap" },
-
-    -- Python Development
-    { "mfussenegger/nvim-dap-python" },
-
-
-    -- Markdown Preview
+    -- Markdown
     { "iamcco/markdown-preview.nvim", build = function() vim.fn["mkdp#util#install"]() end },
-})
 })
