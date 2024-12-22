@@ -82,6 +82,36 @@ return {
                 end
             end,
         })
+        
+        -- Extended mappings for comment operations
+        local api = require('Comment.api')
+        vim.keymap.set('n', '<leader>/', api.toggle.linewise.current, { desc = "Toggle line comment" })
+        vim.keymap.set('n', '<leader>?', api.toggle.blockwise.current, { desc = "Toggle block comment" })
+        
+        -- Visual mode mappings
+        vim.keymap.set('x', '<leader>/', function()
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<ESC>', true, false, true), 'nx', false)
+            api.toggle.linewise(vim.fn.visualmode())
+        end, { desc = "Toggle comment for selection" })
+        
+        -- Add specialized comment mappings
+        vim.keymap.set('n', '<leader>co', api.insert.linewise.above, { desc = "Add comment above" })
+        vim.keymap.set('n', '<leader>cO', api.insert.linewise.below, { desc = "Add comment below" })
+        vim.keymap.set('n', '<leader>cA', api.insert.linewise.eol, { desc = "Add comment at end of line" })
+        
+        -- Enhanced language support
+        local ft = require('Comment.ft')
+        ft.set('lua', { '--%s', '--[[%s]]' })
+        ft.set('python', { '#%s', '"""%s"""' })
+        ft.set('javascript', { '//%s', '/*%s*/' })
+        ft.set('typescript', { '//%s', '/*%s*/' })
+        ft.set('typescriptreact', { '//%s', '{/*%s*/}' })
+        ft.set('javascriptreact', { '//%s', '{/*%s*/}' })
+        ft.set('vue', { '//%s', '<!--%s-->' })
+        ft.set('ruby', { '#%s', '=begin%s=end' })
+        ft.set('rust', { '//%s', '/*%s*/' })
+        ft.set('go', { '//%s', '/*%s*/' })
+        ft.set('cpp', { '//%s', '/*%s*/' })
 
         -- Enhanced keymaps
         local api = require('Comment.api')

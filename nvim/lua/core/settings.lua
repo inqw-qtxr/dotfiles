@@ -2,6 +2,8 @@
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.wrap = false
+vim.opt.clipboard = "unnamedplus"
+vim.opt.mouse = "a"
 
 -- Indentation
 vim.opt.tabstop = 4
@@ -13,6 +15,7 @@ vim.opt.autoindent = true
 -- Search
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+-- vim.opt.hlsearch = false
 
 -- System
 vim.opt.undofile = true

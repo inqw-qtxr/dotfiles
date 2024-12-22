@@ -28,15 +28,6 @@ require("lazy").setup("plugins", {
 
 
 local colorscheme = "gruvbox"
-local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
-if not status_ok then
-    vim.notify("Error: Colorscheme " .. colorscheme .. " not found!", vim.log.levels.WARN)
-    -- Try to set a fallback colorscheme
-    local fallback_colorscheme = "desert"
-    local fallback_status = pcall(vim.cmd, "colorscheme " .. fallback_colorscheme)
-    if not fallback_status then
-        vim.notify("Error: Fallback colorscheme also failed to load!", vim.log.levels.ERROR)
-    end
-end
+vim.cmd("colorscheme " .. colorscheme)
 
 vim.cmd('filetype plugin indent on')

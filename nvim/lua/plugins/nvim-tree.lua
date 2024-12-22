@@ -33,22 +33,13 @@ return {
 
         -- Custom functions
         local function open_nvim_tree(data)
-            -- Buffer is a [No Name]
-            local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
-
-            -- Buffer is a directory
+            -- Only open automatically if it's a directory
             local directory = vim.fn.isdirectory(data.file) == 1
-
-            if not no_name and not directory then
-                return
-            end
 
             if directory then
                 vim.cmd.cd(data.file)
+                api.tree.open()
             end
-
-            -- Open the tree
-            api.tree.open()
         end
 
         -- Auto open tree for directories

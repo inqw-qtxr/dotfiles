@@ -177,7 +177,6 @@ return {
                         "--exclude", "dist",
                         "--exclude", "build"
                     },
-                    previewer = false,
                 },
                 live_grep = {
                     additional_args = function(opts)
