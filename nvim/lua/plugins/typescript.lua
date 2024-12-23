@@ -127,18 +127,18 @@ return {
         "windwp/nvim-ts-autotag",
         config = function()
             require("nvim-ts-autotag").setup({
-                filetypes = {
-                    "html", "javascript", "typescript",
-                    "javascriptreact", "typescriptreact",
-                    "tsx", "jsx", "xml", "markdown",
-                    "vue", "svelte", "php", "astro",
-                },
-                skip_tags = {
-                    'area', 'base', 'br', 'col', 'command',
-                    'embed', 'hr', 'img', 'slot', 'input',
-                    'keygen', 'link', 'meta', 'param',
-                    'source', 'track', 'wbr'
-                },
+                autotag = {
+                    enable = true,
+                    enable_rename = true,
+                    enable_close = true,
+                    enable_close_on_slash = true,
+                    filetypes = {
+                        "html", "javascript", "typescript",
+                        "javascriptreact", "typescriptreact",
+                        "tsx", "jsx", "xml", "markdown",
+                        "vue", "svelte", "php", "astro",
+                    },
+                }
             })
         end,
     },

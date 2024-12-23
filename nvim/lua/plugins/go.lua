@@ -140,6 +140,10 @@ return {
             { "<leader>gT", "<cmd>GoTestFile<CR>", desc = "Test file" },
             { "<leader>gat", "<cmd>GoAddTest<CR>", desc = "Generate test for function" },
             
+            -- Running and building
+            { "<leader>gr", "<cmd>GoRun %<CR>", desc = "Run package" },
+            { "<leader>gb", "<cmd>GoBuild .<CR>", desc = "Build package" },
+
             -- Code analysis
             { "<leader>gal", "<cmd>GoCodeLenAct<CR>", desc = "Code lens" },
             { "<leader>glt", "<cmd>GoLint<CR>", desc = "Lint" },

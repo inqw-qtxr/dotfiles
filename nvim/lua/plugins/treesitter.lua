@@ -146,14 +146,7 @@ return {
                 },
             },
 
-            autotag = {
-                enable = true,
-                filetypes = {
-                    "html", "xml", "javascript", "typescript", "javascriptreact", 
-                    "typescriptreact", "svelte", "vue", "tsx", "jsx", "rescript",
-                    "php", "markdown", "astro", "glimmer", "handlebars", "hbs",
-                },
-            },
+
 
             endwise = {
                 enable = true,
@@ -177,6 +170,16 @@ return {
                     goto_node = "<cr>",
                     show_help = "?",
                 },
+            },
+        })
+
+        -- Configure nvim-ts-autotag
+        require("nvim-ts-autotag").setup({
+            autotag = {
+                enable = true,
+                enable_rename = true,
+                enable_close = true,
+                enable_close_on_slash = true,
             },
         })
 

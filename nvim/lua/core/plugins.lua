@@ -128,4 +128,7 @@ require("lazy").setup({
 
     -- Markdown
     { "iamcco/markdown-preview.nvim", build = function() vim.fn["mkdp#util#install"]() end },
+
+    -- vim-cool for search highlight removal
+    { "romainl/vim-cool" },
 })

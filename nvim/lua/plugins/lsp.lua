@@ -57,6 +57,35 @@ return {
                 },
             })
 
+            -- Enable inlay hints by default
+            local function enable_inlay_hints(client, bufnr)
+                if client.supports_method('textDocument/inlayHint') then
+                    vim.lsp.inlay_hint.enable(bufnr, true)
+                end
+            end
+            -- LSP on_attach function
+            local on_attach = function(client, bufnr)
+                enable_inlay_hints(client, bufnr)
+                
+                -- Enhanced hover capabilities
+                if client.server_capabilities.hoverProvider then
+                    vim.o.updatetime = 250
+                    vim.api.nvim_create_autocmd("CursorHold", {
+                        buffer = bufnr,
+                        callback = function()
+                            local opts = {
+                                focusable = false,
+                                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                                border = 'rounded',
+                                source = 'always',
+                                prefix = ' ',
+                                scope = 'cursor',
+                            }
+                            vim.diagnostic.open_float(opts)
+                        end
+                    })
+                end
+            end
             -- Enhanced LSP mappings with better descriptions
             local function map(mode, lhs, rhs, opts)
                 local options = { noremap = true, silent = true }
@@ -72,7 +101,14 @@ return {
             map('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'LSP: Type Definition' })
 
             -- Documentation
-            map('n', 'K', vim.lsp.buf.hover, { desc = 'LSP: Hover Documentation' })
+            map('n', 'K', function()
+                -- Attempt to show signature help first
+                local sig_ok, _ = pcall(vim.lsp.buf.signature_help)
+                if not sig_ok then
+                    -- Fallback to hover if signature help isn't available
+                    vim.lsp.buf.hover()
+                end
+            end, { desc = 'LSP: Show type information and documentation' })
             map('n', '<C-k>', vim.lsp.buf.signature_help, { desc = 'LSP: Signature Help' })
 
             -- Workspace
@@ -108,7 +144,30 @@ return {
                 scope = 'cursor',
             }
 
-            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, float_config)
+            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+                function(_, result, ctx, config)
+                    config = config or {}
+                    config.focus_id = ctx.method
+                    if not (result and result.contents) then
+                        return
+                    end
+                    local markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+                    markdown_lines = vim.list_extend(
+                        { "```" .. vim.bo.filetype, vim.fn.expand("<cword>") .. ": " },
+                        markdown_lines
+                    )
+                    table.insert(markdown_lines, "```")
+                    return vim.lsp.util.open_floating_preview(markdown_lines, "markdown", config)
+                end,
+                {
+                    border = "rounded",
+                    max_width = 80,
+                    max_height = 40,
+                    focusable = true,
+                    focus = false,
+                    close_events = { "CursorMoved", "BufHidden", "InsertCharPre" }
+                }
+            )
             vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, float_config)
 
             -- Enhanced diagnostic configuration

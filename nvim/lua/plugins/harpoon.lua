@@ -10,7 +10,9 @@ return {
         {
             "<leader>ha",
             function()
-                require("harpoon"):list():append()
+                local harpoon = require("harpoon")
+                if not harpoon:list() then return end
+                harpoon:list():append()
             end,
             desc = "Add file to harpoon"
         },
@@ -25,7 +27,8 @@ return {
         {
             "<leader>hc",
             function()
-                require("harpoon"):list():clear()
+                local harpoon = require("harpoon")
+                harpoon:list():clear()
             end,
             desc = "Clear all harpoon marks"
         },
@@ -33,28 +36,36 @@ return {
         {
             "<C-h>",
             function()
-                require("harpoon"):list():select(1)
+                local harpoon = require("harpoon")
+                local list = harpoon:list()
+                if list then list:select(1) end
             end,
             desc = "Navigate to harpoon 1"
         },
         {
             "<C-j>",
             function()
-                require("harpoon"):list():select(2)
+                local harpoon = require("harpoon")
+                local list = harpoon:list()
+                if list then list:select(2) end
             end,
             desc = "Navigate to harpoon 2"
         },
         {
             "<C-k>",
             function()
-                require("harpoon"):list():select(3)
+                local harpoon = require("harpoon")
+                local list = harpoon:list()
+                if list then list:select(3) end
             end,
             desc = "Navigate to harpoon 3"
         },
         {
             "<C-l>",
             function()
-                require("harpoon"):list():select(4)
+                local harpoon = require("harpoon")
+                local list = harpoon:list()
+                if list then list:select(4) end
             end,
             desc = "Navigate to harpoon 4"
         },
@@ -62,14 +73,16 @@ return {
         {
             "[h",
             function()
-                require("harpoon"):list():prev()
+                local harpoon = require("harpoon")
+                harpoon:list():prev()
             end,
             desc = "Navigate to previous mark"
         },
         {
             "]h",
             function()
-                require("harpoon"):list():next()
+                local harpoon = require("harpoon")
+                harpoon:list():next()
             end,
             desc = "Navigate to next mark"
         },
@@ -107,9 +120,15 @@ return {
         vim.api.nvim_create_autocmd({ "BufEnter" }, {
             callback = function()
                 vim.schedule(function()
-                    local mark_idx = harpoon:list():get_index()
-                    if mark_idx then
-                        vim.b.harpoon_mark = "⥤ " .. mark_idx
+                    local list = harpoon:list()
+                    local current_file_path = vim.fn.expand('%:p')
+                    if list and current_file_path ~= "" then
+                        local current_file_index = list:get_index_of(current_file_path)
+                        if current_file_index then
+                            vim.b.harpoon_mark = "⥤ " .. current_file_index
+                        else
+                            vim.b.harpoon_mark = ""
+                        end
                     else
                         vim.b.harpoon_mark = ""
                     end
