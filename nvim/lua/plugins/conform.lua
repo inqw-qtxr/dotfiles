@@ -99,9 +99,36 @@ return {
                 return
             end
             
-            -- Disable format on save for specific filetypes
-            local disable_filetypes = { "sql", "text" }
-            if vim.tbl_contains(disable_filetypes, vim.bo[bufnr].filetype) then
+            -- Get the file name and extension
+            local filename = vim.fn.expand('%:t')
+            local extension = vim.fn.expand('%:e')
+            
+            -- List of files to exclude from formatting
+            local exclude_files = {
+                ['.env'] = true,
+                ['.env.local'] = true,
+                ['.env.development'] = true,
+                ['.env.production'] = true,
+                ['.env.test'] = true,
+                ['.bashrc'] = true,
+                ['.zshrc'] = true,
+                ['.bash_profile'] = true,
+                ['.zsh_profile'] = true,
+                ['.zshenv'] = true,
+                ['.bash_aliases'] = true,
+                ['.zsh_aliases'] = true,
+            }
+            
+            -- Disable format on save for specific filetypes and files
+            local disable_filetypes = { 
+                "sql", 
+                "text",
+                "conf",  -- Configuration files
+                "config" -- Additional configuration files
+            }
+            
+            -- Check if file should be excluded
+            if exclude_files[filename] or vim.tbl_contains(disable_filetypes, vim.bo[bufnr].filetype) then
                 return
             end
 

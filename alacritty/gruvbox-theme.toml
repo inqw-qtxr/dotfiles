@@ -1,0 +1,75 @@
+# Colors (Gruvbox Hard)
+[colors.primary]
+background = "#1d2021" # hard contrast
+foreground = "#ebdbb2"
+dim_foreground = "#a89984"
+bright_foreground = "#fbf1c7"
+
+# Normal colors
+[colors.normal]
+black = "#1d2021"
+red = "#cc241d"
+green = "#98971a"
+yellow = "#d79921"
+blue = "#458588"
+magenta = "#b16286"
+cyan = "#689d6a"
+white = "#a89984"
+
+# Bright colors
+[colors.bright]
+black = "#928374"
+red = "#fb4934"
+green = "#b8bb26"
+yellow = "#fabd2f"
+blue = "#83a598"
+magenta = "#d3869b"
+cyan = "#8ec07c"
+white = "#ebdbb2"
+
+# Dim colors
+[colors.dim]
+black = "#1d2021"
+red = "#962c22"
+green = "#6f7a15"
+yellow = "#a17419"
+blue = "#35657a"
+magenta = "#7e4c61"
+cyan = "#4c7a5d"
+white = "#7c6f64"
+
+[colors.cursor]
+text = "CellBackground"
+cursor = "CellForeground"
+
+[colors.vi_mode_cursor]
+text = "CellBackground"
+cursor = "CellForeground"
+
+[colors.selection]
+text = "CellBackground"
+background = "CellForeground"
+
+[colors.search.matches]
+foreground = "#1d2021"
+background = "#fabd2f"
+
+[colors.search.focused_match]
+foreground = "#1d2021"
+background = "#b8bb26"
+
+[colors.hints.start]
+foreground = "#1d2021"
+background = "#fabd2f"
+
+[colors.hints.end]
+foreground = "#1d2021"
+background = "#a89984"
+
+[colors.line_indicator]
+foreground = "None"
+background = "None"
+
+[colors.footer_bar]
+foreground = "#1d2021"
+background = "#a89984"

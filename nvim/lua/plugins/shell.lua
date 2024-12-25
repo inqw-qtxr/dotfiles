@@ -28,6 +28,28 @@ return {
         config = function()
             local lspconfig = require("lspconfig")
 
+            -- List of special shell config files with relaxed checking
+            local special_files = {
+                ['.env'] = true,
+                ['.env.local'] = true,
+                ['.env.development'] = true,
+                ['.env.production'] = true,
+                ['.env.test'] = true,
+                ['.bashrc'] = true,
+                ['.zshrc'] = true,
+                ['.bash_profile'] = true,
+                ['.zsh_profile'] = true,
+                ['.zshenv'] = true,
+                ['.bash_aliases'] = true,
+                ['.zsh_aliases'] = true,
+            }
+
+            -- Function to check if file is a special config file
+            local function is_special_file()
+                local filename = vim.fn.expand('%:t')
+                return special_files[filename] or false
+            end
+
             -- Shell-specific keymaps
             local function setup_shell_keymaps(bufnr)
                 local opts = { noremap = true, silent = true, buffer = bufnr }
@@ -37,26 +59,15 @@ return {
                     vim.tbl_extend("force", opts, { desc = "Make executable" }))
                 vim.keymap.set("n", "<leader>sr", "<cmd>!./%<CR>", 
                     vim.tbl_extend("force", opts, { desc = "Run script" }))
-                vim.keymap.set("n", "<leader>sc", "<cmd>!shellcheck %<CR>", 
-                    vim.tbl_extend("force", opts, { desc = "Run shellcheck" }))
+                
+                -- Only add shellcheck command for non-special files
+                if not is_special_file() then
+                    vim.keymap.set("n", "<leader>sc", "<cmd>!shellcheck %<CR>", 
+                        vim.tbl_extend("force", opts, { desc = "Run shellcheck" }))
+                end
             end
 
-            -- Shell script formatting configuration
-            local function setup_shell_formatting(bufnr)
-                local shfmt_args = {
-                    "-i", "4",     -- Use 4 spaces for indentation
-                    "-bn",         -- Binary ops like && and | may start a line
-                    "-ci",         -- Switch cases will be indented
-                    "-sr",         -- Keep space after redirect operators
-                }
-
-                vim.api.nvim_buf_create_user_command(bufnr, "Format", function()
-                    vim.cmd(string.format("!shfmt -w %s %s", table.concat(shfmt_args, " "), vim.fn.expand("%")))
-                    vim.notify("Formatted shell script", vim.log.levels.INFO)
-                end, { desc = "Format shell script" })
-            end
-
-            -- Bash LSP configuration
+            -- Bash LSP configuration with relaxed rules for config files
             lspconfig.bashls.setup({
                 filetypes = { "sh", "bash", "zsh", "fish" },
                 settings = {
@@ -71,13 +82,10 @@ return {
                 on_attach = function(client, bufnr)
                     -- Setup shell-specific keymaps
                     setup_shell_keymaps(bufnr)
-                    
-                    -- Setup formatting
-                    setup_shell_formatting(bufnr)
 
-                    -- Enable inlay hints if supported
-                    if client.server_capabilities.inlayHintProvider then
-                        vim.lsp.inlay_hint.enable(bufnr, true)
+                    -- Disable diagnostics for special files
+                    if is_special_file() then
+                        vim.diagnostic.disable(bufnr)
                     end
                 end,
                 capabilities = require("cmp_nvim_lsp").default_capabilities(),
@@ -93,14 +101,6 @@ return {
                     vim.opt_local.tabstop = 4
                     vim.opt_local.softtabstop = 4
 
-                    -- Format on save
-                    vim.api.nvim_create_autocmd("BufWritePre", {
-                        buffer = 0,
-                        callback = function()
-                            vim.cmd("Format")
-                        end,
-                    })
-
                     -- Add shell script specific comments
                     vim.opt_local.commentstring = "# %s"
 
@@ -109,12 +109,22 @@ return {
                 end,
             })
 
-            -- Configure shellcheck diagnostics
+            -- Configure shellcheck diagnostics with relaxed rules for config files
             vim.api.nvim_create_autocmd("BufWritePost", {
                 pattern = { "*.sh", "*.bash", "*.zsh", "*.fish" },
                 callback = function()
+                    -- Skip shellcheck completely for special configuration files
+                    if is_special_file() then
+                        return
+                    end
+
                     local filename = vim.fn.expand("%:p")
-                    local output = vim.fn.system("shellcheck " .. filename)
+                    -- Run shellcheck with specific exclusions for common config patterns
+                    local command = string.format(
+                        "shellcheck -e SC1090,SC1091,SC2034,SC2086,SC2155,SC2164 %s",
+                        filename
+                    )
+                    local output = vim.fn.system(command)
                     
                     if vim.v.shell_error ~= 0 then
                         vim.notify(output, vim.log.levels.WARN, {

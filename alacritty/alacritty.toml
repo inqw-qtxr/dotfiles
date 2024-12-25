@@ -1,0 +1,13 @@
+import = ["./gruvbox-hard.toml"]
+
+[window]
+startup_mode = "Maximized"
+
+[scrolling]
+history = 100000
+
+[font.normal]
+family = "MesloLGS NF"
+
+[cursor.style]
+blinking = "On"
