@@ -74,7 +74,8 @@ return {
             "[h",
             function()
                 local harpoon = require("harpoon")
-                harpoon:list():prev()
+                local list = harpoon:list()
+                if list then list:prev() end
             end,
             desc = "Navigate to previous mark"
         },
@@ -82,11 +83,13 @@ return {
             "]h",
             function()
                 local harpoon = require("harpoon")
-                harpoon:list():next()
+                local list = harpoon:list()
+                if list then list:next() end
             end,
             desc = "Navigate to next mark"
         },
     },
+    -- The new-style Harpoon settings for the harpoon2 branch
     opts = {
         settings = {
             save_on_toggle = true,
@@ -115,15 +118,18 @@ return {
         
         -- Basic setup
         harpoon:setup(opts)
-        
-        -- Setup marks display in statusline
+
+        -----------------------------------------------------------------------
+        -- Autocmd: store "⥤ <index>" in vim.b.harpoon_mark for your statusline
+        -----------------------------------------------------------------------
         vim.api.nvim_create_autocmd({ "BufEnter" }, {
             callback = function()
                 vim.schedule(function()
                     local list = harpoon:list()
                     local current_file_path = vim.fn.expand('%:p')
                     if list and current_file_path ~= "" then
-                        local current_file_index = list:get_index_of(current_file_path)
+                        -- Changed from get_index_of(...) to index_of_file(...)
+                        local current_file_index = list:index_of_file(current_file_path)
                         if current_file_index then
                             vim.b.harpoon_mark = "⥤ " .. current_file_index
                         else
@@ -136,21 +142,26 @@ return {
             end,
         })
 
-        -- Optional: Telescope integration
+        -----------------------------------------------------------------------
+        -- (Optional) Telescope integration
+        -----------------------------------------------------------------------
         local conf = require("telescope.config").values
+        local pickers = require("telescope.pickers")
+        local finders = require("telescope.finders")
+        local previewers = conf.file_previewer({})
+        local sorter = conf.generic_sorter({})
+
         local function toggle_telescope(harpoon_files)
             local file_paths = {}
             for _, item in ipairs(harpoon_files.items) do
                 table.insert(file_paths, item.value)
             end
 
-            require("telescope.pickers").new({}, {
+            pickers.new({}, {
                 prompt_title = "Harpoon",
-                finder = require("telescope.finders").new_table({
-                    results = file_paths,
-                }),
-                previewer = conf.file_previewer({}),
-                sorter = conf.generic_sorter({}),
+                finder = finders.new_table({ results = file_paths }),
+                previewer = previewers,
+                sorter = sorter,
             }):find()
         end
 
@@ -158,7 +169,9 @@ return {
             toggle_telescope(harpoon:list())
         end, { desc = "Find harpoon marks" })
 
+        -----------------------------------------------------------------------
         -- Custom commands
+        -----------------------------------------------------------------------
         vim.api.nvim_create_user_command("HarpoonAdd", function()
             harpoon:list():append()
         end, { desc = "Add current file to harpoon" })

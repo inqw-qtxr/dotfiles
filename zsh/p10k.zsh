@@ -58,7 +58,7 @@
     nvm                     # node.js version from nvm (https://github.com/nvm-sh/nvm)
     nodeenv                 # node.js environment (https://github.com/ekalinin/nodeenv)
     node_version          # node.js version
-    # go_version            # go version (https://golang.org)
+    go_version            # go version (https://golang.org)
     # rust_version          # rustc version (https://www.rust-lang.org)
     # dotnet_version        # .NET version (https://dotnet.microsoft.com)
     # php_version           # php version (https://www.php.net/)
@@ -120,7 +120,7 @@
   typeset -g POWERLEVEL9K_MODE=powerline
   # When set to `moderate`, some icons will have an extra space after them. This is meant to avoid
   # icon overlap when using non-monospace fonts. When set to `none`, spaces are not added.
-  typeset -g POWERLEVEL9K_ICON_PADDING=none
+  typeset -g POWERLEVEL9K_ICON_PADDING=moderate
 
   # Basic style options that define the overall look of your prompt. You probably don't want to
   # change them.
@@ -163,7 +163,7 @@
   # probably want to set POWERLEVEL9K_PROMPT_ADD_NEWLINE=false above and
   # POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR=' ' below.
   typeset -g POWERLEVEL9K_SHOW_RULER=true
-  typeset -g POWERLEVEL9K_RULER_CHAR='─'        # reasonable alternative: '·'
+  typeset -g POWERLEVEL9K_RULER_CHAR=' '       # reasonable alternative: '·'
   typeset -g POWERLEVEL9K_RULER_FOREGROUND=' '
 
   # Filler between left and right prompt on the first prompt line. You can set it to '·' or '─'
@@ -1699,7 +1699,7 @@
   #   - verbose: Enable instant prompt and print a warning when detecting console output during
   #              zsh initialization. Choose this if you've never tried instant prompt, haven't
   #              seen the warning, or if you are unsure what this all means.
-  typeset -g POWERLEVEL9K_INSTANT_PROMPT=verbose
+  typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
   # Hot reload allows you to change POWERLEVEL9K options after Powerlevel10k has been initialized.
   # For example, you can type POWERLEVEL9K_BACKGROUND=red and see your prompt turn red. Hot reload
