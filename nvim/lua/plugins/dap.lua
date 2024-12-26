@@ -11,7 +11,7 @@ return {
 		{
 			"<leader>dc",
 			function()
-				require("dap").continue()
+				dap.continue()
 			end,
 			desc = "Debug: Continue",
 		},
@@ -209,4 +209,3 @@ return {
 		end, {})
 	end,
 }
-
