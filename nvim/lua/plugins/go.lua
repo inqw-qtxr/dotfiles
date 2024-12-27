@@ -222,14 +222,6 @@ return {
 			},
 		},
 		keys = {
-			-- Code manipulation
-			{ "<leader>gsj", "<cmd>GoAddTag json<CR>", desc = "Add json tags" },
-			{ "<leader>gsy", "<cmd>GoAddTag yaml<CR>", desc = "Add yaml tags" },
-			{ "<leader>gfi", "<cmd>GoFillStruct<CR>", desc = "Fill struct" },
-			{ "<leader>gie", "<cmd>GoIfErr<CR>", desc = "Add if err" },
-			{ "<leader>gim", "<cmd>GoImpl<CR>", desc = "Implement interface" },
-			{ "<leader>gc", "<cmd>GoCmt<CR>", desc = "Generate comment" },
-
 			-- Testing
 			{ "<leader>gt", "<cmd>GoTest<CR>", desc = "Run tests" },
 			{ "<leader>gtf", "<cmd>GoTestFunc<CR>", desc = "Test function" },
@@ -297,4 +289,3 @@ return {
 		},
 	},
 }
-
