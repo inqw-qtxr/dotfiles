@@ -222,12 +222,6 @@ return {
 			},
 		},
 		keys = {
-			-- Testing
-			{ "<leader>gt", "<cmd>GoTest<CR>", desc = "Run tests" },
-			{ "<leader>gtf", "<cmd>GoTestFunc<CR>", desc = "Test function" },
-			{ "<leader>gT", "<cmd>GoTestFile<CR>", desc = "Test file" },
-			{ "<leader>gat", "<cmd>GoAddTest<CR>", desc = "Generate test for function" },
-
 			-- Running and building
 			{ "<leader>gr", "<cmd>GoRun %<CR>", desc = "Run package" },
 			{ "<leader>gb", "<cmd>GoBuild .<CR>", desc = "Build package" },

@@ -8,34 +8,34 @@ return {
 	},
 	keys = {
 		-- Debug controls with better organization
-		{
-			"<leader>dc",
-			function()
-				dap.continue()
-			end,
-			desc = "Debug: Continue",
-		},
-		{
-			"<leader>do",
-			function()
-				require("dap").step_over()
-			end,
-			desc = "Debug: Step Over",
-		},
-		{
-			"<leader>di",
-			function()
-				require("dap").step_into()
-			end,
-			desc = "Debug: Step Into",
-		},
-		{
-			"<leader>dt",
-			function()
-				require("dap").step_out()
-			end,
-			desc = "Debug: Step Out",
-		},
+        {
+            "<leader>dc",
+            function()
+                require("dap").continue()
+            end,
+            desc = "Debug: Continue",
+        },
+        {
+            "<leader>do",
+            function()
+                require("dap").step_over()
+            end,
+            desc = "Debug: Step Over",
+        },
+        {
+            "<leader>di",
+            function()
+                require("dap").step_into()
+            end,
+            desc = "Debug: Step Into",
+        },
+        {
+            "<leader>dt",
+            function()
+                require("dap").step_out()
+            end,
+            desc = "Debug: Step Out",
+        },
 		{
 			"<leader>db",
 			function()

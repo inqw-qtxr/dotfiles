@@ -1,0 +1,18 @@
+shell-integration = zsh
+
+font-family = "Fira Code"
+font-size = 12
+
+theme = "GruvboxDarkHard"
+
+scrollback-limit = 10000000
+
+cursor-style-blink = true
+
+confirm-close-surface = false
+
+auto-update = download
+
+window-padding-y = 1
+
+auto-update-channel = tip
