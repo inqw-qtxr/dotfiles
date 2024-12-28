@@ -1,6 +1,6 @@
 shell-integration = zsh
 
-font-family = "Fira Code"
+font-family = "MesloLGS NF"
 font-size = 12
 
 theme = "GruvboxDarkHard"
