@@ -1,8 +1,6 @@
 font-family = "MesloLGS NF"
 font-size = 12
 
-keybind = global:ctrl+l=clear_screen
-
 theme = "GruvboxDarkHard"
 
 scrollback-limit = 10000000
@@ -10,9 +8,3 @@ scrollback-limit = 10000000
 cursor-style-blink = true
 
 confirm-close-surface = false
-
-auto-update = download
-
-window-padding-x = 1
-
-auto-update-channel = tip
