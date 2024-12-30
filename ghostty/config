@@ -1,6 +1,8 @@
 font-family = "MesloLGS NF"
 font-size = 12
 
+keybind = ctrl+l=clear_screen
+
 theme = "GruvboxDarkHard"
 
 scrollback-limit = 10000000
