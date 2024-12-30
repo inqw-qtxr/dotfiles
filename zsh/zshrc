@@ -48,6 +48,11 @@ fi
 
 # Aliases
 alias vim="$EDITOR"
+alias cat="bat"
+alias ls="lsd"
+alias tls="tmux ls"
+alias tla="tmux attach -t"
+alias tns="tmux new -s"
 
 # Completions
 autoload -U +X bashcompinit && bashcompinit

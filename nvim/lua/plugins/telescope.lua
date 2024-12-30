@@ -225,10 +225,10 @@ return {
 					show_unindexed = true,
 					ignore_patterns = { "*.git/*", "*/tmp/*" },
 					workspaces = {
-						["conf"] = "/Users/williamhicks/dotfiles",
-						["boost-client"] = "/Users/williamhicks/github.com/boost-legal/boost-client",
-						["boost-api"] = "/Users/williamhicks/github.com/boost-legal/boost-api",
-						["hum-server"] = "/Users/williamhicks/Projects/HumServer",
+						["conf"] = "~/dotfiles",
+						["boost-client"] = "~/github.com/boost-legal/boost-client",
+						["boost-api"] = "~/github.com/boost-legal/boost-api",
+						["hum-server"] = "~/Projects/HumServer",
 					},
 				},
 				file_browser = {
@@ -258,10 +258,6 @@ return {
 					},
 				},
 				project = {
-					base_dirs = {
-						"~/williamhicks/github.com/*",
-					},
-
 					hidden_files = true,
 					theme = "dropdown",
 				},
