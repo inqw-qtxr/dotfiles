@@ -1,7 +1,11 @@
-font-family="MesloLGS NF"
+shell-integration=zsh
+shell-integration-features=true
+
+font-family="FiraCode Nerd Font Mono"
 font-size=12
 
 theme="GruvboxDarkHard"
+window-theme=ghostty
 
 scrollback-limit=10000000
 

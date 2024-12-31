@@ -4,7 +4,6 @@ return {
 	cmd = { "ConformInfo" },
 	keys = {
 		{
-			-- Format on save key binding
 			"<leader>mp",
 			function()
 				require("conform").format({ async = true, lsp_fallback = true })
@@ -13,10 +12,9 @@ return {
 			desc = "Format file or range (in visual mode)",
 		},
 		{
-			-- Format and write key binding
 			"<leader>mw",
 			function()
-				require("conform").format({ async = true, lsp_fallback = true, timeout_ms = 500 })
+				require("conform").format({ async = true, lsp_fallback = true })
 				vim.cmd("write")
 			end,
 			mode = "n",
@@ -24,7 +22,6 @@ return {
 		},
 	},
 	opts = {
-		-- Define formatters
 		formatters_by_ft = {
 			lua = { "stylua" },
 			python = { "isort", "black", "ruff_format", "ruff_fix" },
@@ -53,13 +50,12 @@ return {
 			toml = { "taplo" },
 			sql = { "sqlfmt" },
 			dockerfile = { "dockerfile_format" },
-			["_"] = { "trim_whitespace", "trim_newlines" }, -- Run on all files
+			["_"] = { "trim_whitespace", "trim_newlines" },
 		},
 
-		-- Formatter options
 		formatters = {
 			shfmt = {
-				prepend_args = { "-i", "2", "-ci" }, -- 2 space indentation
+				prepend_args = { "-i", "2", "-ci" },
 			},
 			prettier = {
 				prepend_args = {
@@ -96,18 +92,15 @@ return {
 			},
 		},
 
-		-- Format on save settings
-		format_on_save = function(bufnr)
-			-- Disable format on save for large files
+		-- Changed format_on_save to use format_after_save instead
+		format_after_save = function(bufnr)
 			if vim.api.nvim_buf_line_count(bufnr) > 5000 then
 				return
 			end
 
-			-- Get the file name and extension
 			local filename = vim.fn.expand("%:t")
 			local extension = vim.fn.expand("%:e")
 
-			-- List of files to exclude from formatting
 			local exclude_files = {
 				[".env"] = true,
 				[".env.local"] = true,
@@ -123,15 +116,13 @@ return {
 				[".zsh_aliases"] = true,
 			}
 
-			-- Disable format on save for specific filetypes and files
 			local disable_filetypes = {
 				"sql",
 				"text",
-				"conf", -- Configuration files
-				"config", -- Additional configuration files
+				"conf",
+				"config",
 			}
 
-			-- Check if file should be excluded
 			if exclude_files[filename] or vim.tbl_contains(disable_filetypes, vim.bo[bufnr].filetype) then
 				return
 			end
@@ -139,28 +130,16 @@ return {
 			return {
 				timeout_ms = 500,
 				lsp_fallback = true,
-				async = false,
 			}
 		end,
 
-		-- Format after specific events
-		format_after_save = {
-			lsp_fallback = true,
-		},
-
-		-- Notify on formatting errors
 		notify_on_error = true,
-
-		-- Log level for debugging
 		log_level = vim.log.levels.ERROR,
 	},
 	config = function(_, opts)
 		local conform = require("conform")
-
-		-- Setup conform with options
 		conform.setup(opts)
 
-		-- Add format commands
 		vim.api.nvim_create_user_command("Format", function(args)
 			local range = nil
 			if args.count ~= -1 then
@@ -173,7 +152,6 @@ return {
 			conform.format({ async = true, lsp_fallback = true, range = range })
 		end, { range = true })
 
-		-- Create commands for specific formatters
 		vim.api.nvim_create_user_command("FormatPrettier", function()
 			conform.format({
 				formatters = { "prettier" },
@@ -181,10 +159,8 @@ return {
 			})
 		end, {})
 
-		-- Autocommands for specific file types
 		local format_group = vim.api.nvim_create_augroup("FormatAutogroup", {})
 
-		-- Format package.json on save
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			pattern = "package.json",
 			group = format_group,
@@ -197,4 +173,3 @@ return {
 		})
 	end,
 }
-
