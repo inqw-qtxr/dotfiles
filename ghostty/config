@@ -1,10 +1,12 @@
-font-family = "MesloLGS NF"
-font-size = 12
+font-family="MesloLGS NF"
+font-size=12
 
-theme = "GruvboxDarkHard"
+theme="GruvboxDarkHard"
 
-scrollback-limit = 10000000
+scrollback-limit=10000000
 
-cursor-style-blink = true
+cursor-style-blink=true
 
-confirm-close-surface = false
+confirm-close-surface=false
+
+keybind=ctrl+k=clear_screen
