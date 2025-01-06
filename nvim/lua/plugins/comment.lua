@@ -101,37 +101,9 @@ return {
         
         -- Enhanced language support
         local ft = require('Comment.ft')
-        ft.set('lua', { '--%s', '--[[%s]]' })
-        ft.set('python', { '#%s', '"""%s"""' })
-        ft.set('javascript', { '//%s', '/*%s*/' })
-        ft.set('typescript', { '//%s', '/*%s*/' })
-        ft.set('typescriptreact', { '//%s', '{/*%s*/}' })
-        ft.set('javascriptreact', { '//%s', '{/*%s*/}' })
-        ft.set('vue', { '//%s', '<!--%s-->' })
-        ft.set('ruby', { '#%s', '=begin%s=end' })
-        ft.set('rust', { '//%s', '/*%s*/' })
-        ft.set('go', { '//%s', '/*%s*/' })
-        ft.set('cpp', { '//%s', '/*%s*/' })
 
         -- Enhanced keymaps
         local api = require('Comment.api')
-        
-        -- Normal mode mappings
-        vim.keymap.set('n', '<leader>/', api.toggle.linewise.current, 
-            { desc = "Toggle comment line" })
-        vim.keymap.set('n', '<leader>?', api.toggle.blockwise.current, 
-            { desc = "Toggle block comment" })
-        
-        -- Visual mode mappings
-        vim.keymap.set('x', '<leader>/', function()
-            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<ESC>', true, false, true), 'nx', false)
-            api.toggle.linewise(vim.fn.visualmode())
-        end, { desc = "Toggle comment for selection" })
-        
-        vim.keymap.set('x', '<leader>?', function()
-            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<ESC>', true, false, true), 'nx', false)
-            api.toggle.blockwise(vim.fn.visualmode())
-        end, { desc = "Toggle block comment for selection" })
 
         vim.api.nvim_create_user_command('CommentToggle', function(opts)
             local count = opts.count

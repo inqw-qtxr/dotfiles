@@ -31,31 +31,3 @@ vim.opt.timeout = false
 vim.opt.ttimeout = false
 vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
-
--- Add Python specific autocommands
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "python",
-    callback = function()
-        vim.opt_local.expandtab = true
-        vim.opt_local.shiftwidth = 4
-        vim.opt_local.tabstop = 4
-        vim.opt_local.softtabstop = 4
-        vim.opt_local.colorcolumn = "88"  -- Black's default line length
-        vim.opt_local.textwidth = 88
-    end,
-})
-
--- Go specific settings
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "go",
-    callback = function()
-        -- Use tabs for Go files as per Go standards
-        vim.bo.expandtab = false
-        vim.bo.tabstop = 4
-        vim.bo.shiftwidth = 4
-        -- Set textwidth for Go files
-        vim.bo.textwidth = 120
-        -- Enable format on save for Go files
-        vim.opt_local.formatoptions:append('q')
-    end,
-})

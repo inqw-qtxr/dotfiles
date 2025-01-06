@@ -23,39 +23,76 @@ return {
 	},
 	opts = {
 		formatters_by_ft = {
-			lua = { "stylua" },
-			python = { "isort", "black", "ruff_format", "ruff_fix" },
-			javascript = { "prettier" },
-			typescript = { "prettier" },
-			javascriptreact = { "prettier" },
-			typescriptreact = { "prettier" },
-			vue = { "prettier" },
-			css = { "prettier" },
-			scss = { "prettier" },
-			html = { "prettier" },
-			json = { "prettier" },
-			jsonc = { "prettier" },
-			markdown = { "prettier" },
-			["markdown.mdx"] = { "prettier" },
-			graphql = { "prettier" },
-			rust = { "rustfmt" },
-			go = { "gofumpt", "goimports", "golines" },
-			sh = { "shfmt" },
-			bash = { "shfmt" },
+			-- Python - multiple formatters running in sequence
+			python = {
+				"isort", -- Import sorting
+				"black", -- Code formatting
+				"ruff_fix", -- Quick fixes
+				"ruff_format", -- Formatting
+			},
+
+			-- Go - running in sequence
+			go = {
+				"gofumpt", -- Stricter gofmt
+				"goimports", -- Manage imports
+				"golines", -- Line length fixing
+				"golangci-lint", -- Linting
+			},
+
+			-- JavaScript/TypeScript
+			javascript = { "biome", "prettier" }, -- Biome first, fallback to prettier
+			typescript = { "biome", "prettier" },
+			javascriptreact = { "biome", "prettier" },
+			typescriptreact = { "biome", "prettier" },
+			json = { "biome", "prettier" },
+			jsonc = { "biome", "prettier" },
+
+			-- Ruby - multiple formatters
+			ruby = {
+				"rubocop", -- Main Ruby formatter/linter
+				"standardrb", -- Alternative Ruby formatter
+				"prettier", -- For ERB files
+			},
+
+			-- Shell
+			sh = { "shfmt", "shellcheck" },
+			bash = { "shfmt", "shellcheck" },
 			zsh = { "shfmt" },
-			fish = { "fish_indent" },
-			c = { "clang_format" },
-			cpp = { "clang_format" },
-			cmake = { "cmake_format" },
-			toml = { "taplo" },
-			sql = { "sqlfmt" },
-			dockerfile = { "dockerfile_format" },
+
+			-- Global
 			["_"] = { "trim_whitespace", "trim_newlines" },
 		},
 
 		formatters = {
-			shfmt = {
-				prepend_args = { "-i", "2", "-ci" },
+			-- Python formatters
+			black = {
+				prepend_args = { "--line-length", "100" },
+			},
+			isort = {
+				prepend_args = { "--profile", "black", "--line-length", "100" },
+			},
+			ruff_format = {
+				prepend_args = { "--line-length", "100" },
+			},
+
+			-- Go formatters
+			golines = {
+				prepend_args = { "--max-len", "100", "--base-formatter", "gofumpt" },
+			},
+			golangci_lint = {
+				prepend_args = { "run", "--fix" },
+			},
+
+			-- JavaScript/TypeScript formatters
+			biome = {
+				prepend_args = {
+					"--line-width",
+					"100",
+					"--indent-style",
+					"space",
+					"--indent-width",
+					"2",
+				},
 			},
 			prettier = {
 				prepend_args = {
@@ -75,24 +112,41 @@ return {
 					"true",
 				},
 			},
-			black = {
-				prepend_args = { "--line-length", "100" },
+
+			-- Ruby formatters
+			rubocop = {
+				command = "bundle",
+				args = {
+					"exec",
+					"rubocop",
+					"--auto-correct",
+					"--format",
+					"quiet",
+					"--stdin",
+					"$FILENAME",
+				},
 			},
-			isort = {
-				prepend_args = { "--profile", "black" },
+			standardrb = {
+				command = "bundle",
+				args = {
+					"exec",
+					"standardrb",
+					"--fix",
+					"-a",
+					"--stdin",
+					"$FILENAME",
+				},
 			},
-			clang_format = {
-				prepend_args = { "--style", "{BasedOnStyle: Google, IndentWidth: 2}" },
+
+			-- Shell formatters
+			shfmt = {
+				prepend_args = { "-i", "2", "-ci", "-bn" },
 			},
-			rustfmt = {
-				prepend_args = { "--edition", "2021" },
-			},
-			golines = {
-				prepend_args = { "--max-len", "100", "--base-formatter", "gofumpt" },
+			shellcheck = {
+				prepend_args = { "--shell=bash", "--format=gcc" },
 			},
 		},
 
-		-- Changed format_on_save to use format_after_save instead
 		format_after_save = function(bufnr)
 			if vim.api.nvim_buf_line_count(bufnr) > 5000 then
 				return
@@ -116,11 +170,14 @@ return {
 				[".zsh_aliases"] = true,
 			}
 
+			-- Add back filetype exclusions
 			local disable_filetypes = {
 				"sql",
 				"text",
 				"conf",
 				"config",
+				"plain",
+				"properties",
 			}
 
 			if exclude_files[filename] or vim.tbl_contains(disable_filetypes, vim.bo[bufnr].filetype) then
@@ -158,18 +215,5 @@ return {
 				async = true,
 			})
 		end, {})
-
-		local format_group = vim.api.nvim_create_augroup("FormatAutogroup", {})
-
-		vim.api.nvim_create_autocmd("BufWritePre", {
-			pattern = "package.json",
-			group = format_group,
-			callback = function()
-				conform.format({
-					formatters = { "prettier" },
-					async = false,
-				})
-			end,
-		})
 	end,
 }

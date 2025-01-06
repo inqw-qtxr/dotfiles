@@ -7,11 +7,8 @@ return {
 		"nvim-telescope/telescope-ui-select.nvim",
 		"nvim-telescope/telescope-frecency.nvim",
 		"aaronhallaert/advanced-git-search.nvim",
-		"molecule-man/telescope-menufacture",
 		"nvim-telescope/telescope-live-grep-args.nvim",
 		"debugloop/telescope-undo.nvim", -- Undo history
-		"nvim-telescope/telescope-project.nvim", -- Project management
-		"nvim-telescope/telescope-dap.nvim", -- DAP integration
 	},
 	cmd = "Telescope",
 	keys = {
@@ -23,9 +20,6 @@ return {
 		{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
 		{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old Files" },
 		{ "<leader>fw", "<cmd>Telescope grep_string<cr>", desc = "Find Word Under Cursor" },
-
-		-- Project management
-		{ "<leader>fp", "<cmd>Telescope project<cr>", desc = "Projects" },
 
 		-- Buffer management
 		{ "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "List Buffers" },
@@ -42,6 +36,19 @@ return {
 		{ "<leader>u", "<cmd>Telescope undo<cr>", desc = "Undo History" },
 		{ "<leader>sd", "<cmd>Telescope diagnostics<cr>", desc = "Search Diagnostics" },
 		{ "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Search Keymaps" },
+
+		-- LSP Integration
+		{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<cr>", desc = "LSP Document Symbols" },
+		{ "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "LSP References" },
+		{ "<leader>li", "<cmd>Telescope lsp_implementations<cr>", desc = "LSP Implementations" },
+		{ "<leader>ld", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "LSP Buffer Diagnostics" },
+		{ "<leader>lD", "<cmd>Telescope diagnostics<cr>", desc = "LSP Workspace Diagnostics" },
+		{ "<leader>lt", "<cmd>Telescope lsp_type_definitions<cr>", desc = "LSP Type Definitions" },
+		{ "<leader>lc", "<cmd>Telescope lsp_incoming_calls<cr>", desc = "LSP Incoming Calls" },
+		{ "<leader>lo", "<cmd>Telescope lsp_outgoing_calls<cr>", desc = "LSP Outgoing Calls" },
+
+		-- Harpoon Integration (in addition to existing harpoon.ui)
+		{ "<leader>hm", "<cmd>Telescope harpoon marks<cr>", desc = "Harpoon Marks" },
 	},
 	config = function()
 		local telescope_setup, telescope = pcall(require, "telescope")
@@ -70,6 +77,7 @@ return {
 						["<C-t>"] = actions.select_tab, -- Open in new tab
 						["<C-/>"] = actions.which_key, -- Show mappings
 						["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+						["<CR>"] = actions.select_default,
 					},
 					n = {
 						["<esc>"] = actions.close,
@@ -208,6 +216,26 @@ return {
 					prompt_title = "Recent Files",
 					previewer = false,
 				},
+				lsp_references = {
+					theme = "dropdown",
+					initial_mode = "normal",
+				},
+				lsp_implementations = {
+					theme = "dropdown",
+					initial_mode = "normal",
+				},
+				lsp_definitions = {
+					theme = "dropdown",
+					initial_mode = "normal",
+				},
+				diagnostics = {
+					theme = "dropdown",
+					initial_mode = "normal",
+					layout_config = {
+						width = 0.95,
+						height = 0.85,
+					},
+				},
 			},
 
 			extensions = {
@@ -218,12 +246,28 @@ return {
 					case_mode = "smart_case",
 				},
 				ui_select = {
-					require("telescope.themes").get_dropdown(),
+					require("telescope.themes").get_dropdown({
+						initial_mode = "normal",
+						sorting_strategy = "ascending",
+						layout_strategy = "center",
+						results_title = false,
+						layout_config = {
+							width = 0.5,
+							height = 0.4,
+						},
+					}),
 				},
 				frecency = {
 					show_scores = true,
 					show_unindexed = true,
-					ignore_patterns = { "*.git/*", "*/tmp/*" },
+					ignore_patterns = {
+						"*.git/*",
+						"*/tmp/*",
+						"*/node_modules/*",
+						"*/vendor/*",
+						"*/dist/*",
+						"*/build/*",
+					},
 					workspaces = {
 						["conf"] = "~/dotfiles",
 						["boost-client"] = "~/github.com/boost-legal/boost-client",
@@ -257,10 +301,6 @@ return {
 						preview_height = 0.8,
 					},
 				},
-				project = {
-					hidden_files = true,
-					theme = "dropdown",
-				},
 			},
 		})
 
@@ -280,12 +320,50 @@ return {
 			"advanced_git_search",
 			"live_grep_args",
 			"undo",
-			"project",
-			"dap",
 		}
 
 		for _, ext in ipairs(extensions) do
 			safe_load_extension(ext)
 		end
+
+		-- Add workspace symbols configuration
+		telescope.register_extension({
+			exports = {
+				smart_workspace = function(opts)
+					local pickers = require("telescope.pickers")
+					local finders = require("telescope.finders")
+					local previewers = require("telescope.previewers")
+					local conf = require("telescope.config").values
+
+					local harpoon_marks = require("harpoon"):list()
+					local results = {}
+
+					-- Add Harpoon marks
+					for _, mark in ipairs(harpoon_marks.items) do
+						table.insert(results, {
+							value = mark.value,
+							display = "📌 " .. vim.fn.fnamemodify(mark.value, ":t"),
+							ordinal = mark.value,
+							filename = mark.value,
+						})
+					end
+
+					-- Create the picker
+					pickers
+						.new(opts, {
+							prompt_title = "Smart Workspace",
+							finder = finders.new_table({
+								results = results,
+								entry_maker = function(entry)
+									return entry
+								end,
+							}),
+							previewer = previewers.vim_buffer_cat.new(opts),
+							sorter = conf.generic_sorter(opts),
+						})
+						:find()
+				end,
+			},
+		})
 	end,
 }
