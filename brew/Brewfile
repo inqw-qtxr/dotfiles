@@ -1,0 +1,56 @@
+# Taps
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+
+# Essential CLI Tools
+brew "git"
+brew "vim"
+brew "neovim"
+brew "tmux"
+brew "zsh"
+brew "fzf"
+brew "ripgrep"
+brew "fd"
+brew "bat"  # Better cat
+brew "htop" # Better top
+brew "jq"   # JSON processor
+brew "tree" # Directory tree viewer
+
+# Development Tools
+brew "gh"        # GitHub CLI
+brew "lazygit"   # Terminal UI for git
+brew "cmake"
+brew "gmake"    # GNU Make because macOS make is outdated
+
+# Languages and Language Servers
+brew "lua-language-server"
+brew "typescript-language-server"
+brew "stylua"
+brew "shellcheck"
+brew "shfmt"
+brew "pyright"
+brew "black"
+brew "isort"     
+
+# Terminal Utilities
+brew "bottom"    # System monitor
+brew "tldr"      # Simplified man pages
+brew "wget"
+brew "curl"
+
+# Terminal Emulators and Apps
+cask "alacritty"
+cask "ghostty"
+
+# Formatters and Linters
+brew "prettier"  # Code formatter
+brew "black"     # Python formatter
+
+# Cloud and Container Tools
+brew "awscli"    # AWS CLI
+cask "docker"    # Docker Desktop
+
+# Modern CLI Alternatives
+brew "lsd"       # Modern ls
+brew "erdtree"   # Modern tree

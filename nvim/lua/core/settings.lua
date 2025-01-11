@@ -1,33 +1,31 @@
--- Editor Behavior
+-- general editor settings
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.wrap = false
-vim.opt.clipboard = "unnamedplus"
 vim.opt.mouse = "a"
+vim.opt.clipboard = "unnamedplus"
 
--- Indentation
+-- indentation settings
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.smartindent = true
-vim.opt.autoindent = true
 
--- Search
+-- system settings
+vim.opt.termguicolors = true
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undofile = true
+vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undolevels = 10000 -- no need for undoreload when undolevels is set
+
+-- timing settings and quality of life
+vim.opt.timeout = false -- These two are likely not what you want, as they disable
+vim.opt.ttimeout = false -- mapping timeouts. Consider removing them.
+vim.opt.timeoutlen = 1000
+vim.opt.ttimeoutlen = 0 -- ttimeoutlen should be greater than zero to avoid input lag.
+
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
--- vim.opt.hlsearch = false
-
--- System
-vim.opt.undofile = true
-vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
-vim.opt.undolevels = 10000
-vim.opt.undoreload = 100000
-
--- Status
-vim.opt.statusline = "%f %y %r %m %=%l,%c %p%%"
-
--- Timing
-vim.opt.timeout = false
-vim.opt.ttimeout = false
-vim.opt.timeoutlen = 1000
-vim.opt.ttimeoutlen = 0
+vim.opt.incsearch = true
+vim.opt.hlsearch = false
