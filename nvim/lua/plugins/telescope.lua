@@ -14,6 +14,7 @@ return {
 		"nvim-telescope/telescope-dap.nvim",
 		"nvim-telescope/telescope-z.nvim",
 		"ThePrimeagen/harpoon",
+		"folke/noice.nvim",
 	},
 	cmd = "Telescope",
 	keys = {
@@ -248,6 +249,7 @@ return {
 					show_unindexed = true,
 					ignore_patterns = { "*.git/*", "*/tmp/*" },
 					workspaces = {
+						["github"] = "~/github.com",
 						["conf"] = "~/dotfiles",
 						["project"] = "~/Projects",
 					},
@@ -263,6 +265,7 @@ return {
 				project = {
 					base_dirs = {
 						"~/Projects",
+						"~/github.com",
 					},
 					hidden_files = true,
 					theme = "dropdown",
@@ -291,6 +294,7 @@ return {
 			"dap",
 			"z",
 			"harpoon",
+			"noice",
 		}
 
 		for _, ext in ipairs(extensions) do

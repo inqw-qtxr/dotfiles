@@ -7,7 +7,14 @@ startup_mode = "Maximized"
 history = 100000
 
 [font.normal]
-family = "MesloLGS NF"
+family = "FiraCode Nerd Font Mono"
+
+[font]
+size = 12
+
+[selection]
+save_to_clipboard = true
 
 [cursor.style]
-blinking = "On"
+blinking = "on"
+

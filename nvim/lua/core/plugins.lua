@@ -13,13 +13,14 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	spec = {
+		{ import = "plugins.gruvbox" },
 		{ import = "plugins.autopairs" },
-		{ import = "plugins.blink" },
 		{ import = "plugins.conform" },
+		{ import = "plugins.copilot" },
 		{ import = "plugins.dap" },
 		{ import = "plugins.gitsigns" },
-		{ import = "plugins.gruvbox" },
 		{ import = "plugins.harpoon" },
+		{ import = "plugins.lazygit" },
 		{ import = "plugins.lint" },
 		{ import = "plugins.lsp" },
 		{ import = "plugins.mason-lsp" },
@@ -29,6 +30,7 @@ require("lazy").setup({
 		{ import = "plugins.treesitter" },
 		{ import = "plugins.treesitter-context" },
 		{ import = "plugins.trouble" },
+		{ import = "plugins.noice" },
 	},
 	defaults = {
 		lazy = false,

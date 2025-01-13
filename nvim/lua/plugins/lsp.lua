@@ -11,31 +11,38 @@ return {
 		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-path",
 		"hrsh7th/cmp-cmdline",
-		"saghen/blink.cmp",
+		"L3MON4D3/LuaSnip",
+		"saadparwaiz1/cmp_luasnip",
+		"rafamadriz/friendly-snippets",
 		"williamboman/mason.nvim",
 		"williamboman/mason-lspconfig.nvim",
 	},
 	lazy = false,
-	priority = 98, -- Lower than mason and mason-lspconfig
+	priority = 98,
 	config = function()
-		-- Wait for mason-lspconfig to be ready
+		-- Check for mason-lspconfig
 		local mason_ok, _ = pcall(require, "mason-lspconfig")
 		if not mason_ok then
 			return
 		end
 
-		-- Create augroup first
+		-- Create format augroup
 		local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
-		-- Define on_attach function before using it
-		local on_attach = function(client, bufnr)
-			require("lsp_signature").setup({
-				bind = true,
-				handler_opts = { border = "rounded" },
-			})
+		-- LSP Signature setup
+		require("lsp_signature").setup({
+			bind = true,
+			handler_opts = { border = "rounded" },
+			floating_window = false,
+			hint_prefix = " ",
+		})
 
+		-- Define on_attach function
+		local on_attach = function(client, bufnr)
+			-- Setup rename
 			require("inc_rename").setup({ input_buffer_type = "dressing" })
 
+			-- Setup formatting on save
 			if client.supports_method("textDocument/formatting") then
 				vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
 				vim.api.nvim_create_autocmd("BufWritePre", {
@@ -47,6 +54,7 @@ return {
 				})
 			end
 
+			-- Setup hover diagnostics
 			if client.server_capabilities.hoverProvider then
 				vim.o.updatetime = 100
 				vim.api.nvim_create_autocmd("CursorHold", {
@@ -64,44 +72,114 @@ return {
 				})
 			end
 
-			-- navigation keymappings
-			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { noremap = true, silent = true })
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { noremap = true, silent = true })
-			vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true })
-			vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { noremap = true, silent = true })
-			vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { noremap = true, silent = true })
+			-- Keymappings
+			local opts = { noremap = true, silent = true }
+			-- Navigation
+			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+			vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+			vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+			vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+			vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
-			-- hover documentation and formatting
-			vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true })
-			vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { noremap = true, silent = true })
+			-- Workspace
+			vim.keymap.set("n", "<leader>w", vim.lsp.buf.workspace_symbol, opts)
 
-			-- workspaces
-			vim.keymap.set("n", "<leader>w", vim.lsp.buf.workspace_symbol, { noremap = true, silent = true })
+			-- Formatting
+			vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
 
-			-- diagnostics
-			vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { noremap = true, silent = true })
-			vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { noremap = true, silent = true })
-			vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { noremap = true, silent = true })
-			vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { noremap = true, silent = true })
+			-- Diagnostics
+			vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+			vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+			vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+			vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
 
-			-- code actions
-			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { noremap = true, silent = true })
+			-- Code actions
+			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 		end
 
-		require("lsp_signature").setup({
-			bind = true,
-			handler_opts = { border = "rounded" },
-			floating_window = false,
-			hint_prefix = " ",
+		-- Setup completion
+		local cmp = require("cmp")
+		local luasnip = require("luasnip")
+
+		-- Load snippets
+		require("luasnip.loaders.from_vscode").lazy_load()
+
+		-- Setup cmp
+		cmp.setup({
+			snippet = {
+				expand = function(args)
+					luasnip.lsp_expand(args.body)
+				end,
+			},
+			mapping = cmp.mapping.preset.insert({
+				["<S-Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.select_prev_item()
+					elseif luasnip.jumpable(-1) then
+						luasnip.jump(-1)
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+
+				["<Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.select_next_item()
+					elseif luasnip.expand_or_jumpable() then
+						luasnip.expand_or_jump()
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+
+				["<CR>"] = cmp.mapping.confirm({
+					behavior = cmp.ConfirmBehavior.Replace,
+					select = true,
+				}),
+				["<C-Space>"] = cmp.mapping.complete(),
+				["<C-e>"] = cmp.mapping.abort(),
+				["<C-d>"] = cmp.mapping.scroll_docs(4),
+				["<C-u>"] = cmp.mapping.scroll_docs(-4),
+			}),
+			sources = cmp.config.sources({
+				{ name = "copilot", group_index = 2 },
+				{ name = "nvim_lsp", group_index = 2 },
+				{ name = "luasnip", group_index = 2 },
+				{ name = "buffer", group_index = 3 },
+				{ name = "path", group_index = 3 },
+			}),
+			formatting = {
+				format = function(entry, vim_item)
+					vim_item.menu = ({
+						copilot = "[Copilot]",
+						nvim_lsp = "[LSP]",
+						luasnip = "[Snippet]",
+						buffer = "[Buffer]",
+						path = "[Path]",
+					})[entry.source.name]
+					return vim_item
+				end,
+			},
+			experimental = {
+				ghost_text = true,
+			},
 		})
 
-		-- Setup LSP configuration
+		-- Command line completion
+		cmp.setup.cmdline(":", {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = cmp.config.sources({
+				{ name = "path" },
+				{ name = "cmdline" },
+			}),
+		})
+
+		-- Setup LSP servers
 		local lspconfig_ok, lspconfig = pcall(require, "nvim-lspconfig")
 		if not lspconfig_ok then
 			return
 		end
 
-		-- Setup each server
 		local servers = {
 			"lua_ls",
 			"gopls",
@@ -124,6 +202,7 @@ return {
 			})
 		end
 
+		-- Setup additional plugins
 		require("lazydev").setup({
 			library = {
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },

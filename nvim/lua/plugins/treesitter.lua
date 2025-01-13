@@ -25,7 +25,6 @@ return {
 			"ruby",
 			"python",
 			"yaml",
-			"markdown",
 			"regex",
 			"vim",
 			"query",
@@ -129,7 +128,7 @@ return {
 					enable = true,
 					clear_on_cursor_move = true,
 				},
-				highlight_current_scope = { enable = true },
+				highlight_current_scope = { enable = false },
 				smart_rename = {
 					enable = true,
 					keymaps = {

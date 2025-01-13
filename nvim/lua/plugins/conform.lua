@@ -25,7 +25,6 @@ return {
 			html = { "djlint" },
 			css = { "stylelint" },
 			scss = { "stylelint" },
-			markdown = { { "markdownlint", "marksman" } },
 			go = { "gofumpt", "gopls", "golines" },
 			ruby = { "rubocop" },
 			rust = { "rustfmt" },

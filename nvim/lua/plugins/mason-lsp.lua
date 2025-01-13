@@ -31,7 +31,6 @@ return {
 				"rubocop",
 				"pyright",
 				"ruff",
-				"black",
 				"jsonls",
 				"terraformls",
 				"dockerls",
@@ -61,3 +60,4 @@ return {
 		end,
 	},
 }
+

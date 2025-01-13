@@ -11,7 +11,7 @@ return {
 		harpoon:setup()
 
 		vim.keymap.set("n", "<leader>ha", function()
-			harpoon:list():add_file()
+			harpoon:list():add()
 		end)
 		vim.keymap.set("n", "<leader>hm", function()
 			harpoon:list():set_current_buf()
@@ -62,7 +62,7 @@ return {
 				:find()
 		end
 
-		vim.keymap.set("n", "<leader>e", function()
+		vim.keymap.set("n", "<leader>he", function()
 			toggle_telescope(harpoon:list())
 		end, { desc = "Open harpoon window" })
 	end,
