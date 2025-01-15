@@ -35,4 +35,3 @@ return {
 		end, { desc = "Trigger linting for current file" })
 	end,
 }
-

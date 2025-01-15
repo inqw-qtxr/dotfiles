@@ -16,6 +16,7 @@ require("lazy").setup({
 		{ import = "plugins.gruvbox" },
 		{ import = "plugins.autopairs" },
 		{ import = "plugins.conform" },
+		{ import = "plugins.comment" },
 		{ import = "plugins.copilot" },
 		{ import = "plugins.dap" },
 		{ import = "plugins.gitsigns" },
