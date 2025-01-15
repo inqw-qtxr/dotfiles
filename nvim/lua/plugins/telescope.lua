@@ -15,6 +15,9 @@ return {
 		"nvim-telescope/telescope-z.nvim",
 		"ThePrimeagen/harpoon",
 		"folke/noice.nvim",
+		"folke/which-key.nvim",
+		"nvim-telescope/telescope-symbols.nvim",
+		"kdheepak/lazygit.nvim",
 	},
 	cmd = "Telescope",
 	keys = {
@@ -255,7 +258,7 @@ return {
 					},
 				},
 				file_browser = {
-					hijack_netrw = true,
+					hijack_netrw = false,
 					hidden = true,
 					respect_gitignore = false,
 				},
@@ -264,6 +267,7 @@ return {
 				},
 				project = {
 					base_dirs = {
+						"~/dotfiles",
 						"~/Projects",
 						"~/github.com",
 					},
@@ -295,6 +299,9 @@ return {
 			"z",
 			"harpoon",
 			"noice",
+			"which-key",
+			"symbols",
+			"lazygit",
 		}
 
 		for _, ext in ipairs(extensions) do

@@ -22,5 +22,13 @@ return {
 
 		vim.keymap.set("n", "<leader>E", api.tree.toggle, { noremap = true, silent = true })
 		vim.keymap.set("n", "<leader>R", api.tree.reload, { noremap = true, silent = true })
+
+		nvim_tree.setup({
+			disable_netrw = true,
+			hijack_directories = {
+				enable = true,
+				auto_open = false,
+			},
+		})
 	end,
 }
