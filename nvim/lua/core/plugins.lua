@@ -21,7 +21,6 @@ require("lazy").setup({
 		{ import = "plugins.dap" },
 		{ import = "plugins.gitsigns" },
 		{ import = "plugins.harpoon" },
-		{ import = "plugins.lazygit" },
 		{ import = "plugins.lint" },
 		{ import = "plugins.lsp" },
 		{ import = "plugins.mason-lsp" },
