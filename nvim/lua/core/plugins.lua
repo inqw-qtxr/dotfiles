@@ -15,6 +15,7 @@ require("lazy").setup({
 	spec = {
 		{ import = "plugins.gruvbox" },
 		{ import = "plugins.autopairs" },
+		{ import = "plugins.lualine" },
 		{ import = "plugins.conform" },
 		{ import = "plugins.comment" },
 		{ import = "plugins.copilot" },
