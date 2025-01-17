@@ -13,7 +13,7 @@ return {
 		"nvim-telescope/telescope-project.nvim",
 		"nvim-telescope/telescope-dap.nvim",
 		"nvim-telescope/telescope-z.nvim",
-		"ThePrimeagen/harpoon",
+		{ "ThePrimeagen/harpoon", branch = "harpoon2" },
 		"folke/noice.nvim",
 		"folke/which-key.nvim",
 		"nvim-telescope/telescope-symbols.nvim",
