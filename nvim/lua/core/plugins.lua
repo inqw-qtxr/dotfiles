@@ -24,7 +24,7 @@ require("lazy").setup({
 		{ import = "plugins.harpoon" },
 		{ import = "plugins.lint" },
 		{ import = "plugins.lsp" },
-		{ import = "plugins.mason-lsp" },
+		-- { import = "plugins.mason-lsp" },
 		{ import = "plugins.project" },
 		{ import = "plugins.telescope" },
 		{ import = "plugins.tree" },
