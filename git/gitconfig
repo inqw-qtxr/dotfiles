@@ -1,0 +1,127 @@
+[user]
+    name = William Hicks
+    email = w.hicks917@icloud.com
+    signingKey = CB7F483A76E12E36A190B6D15E85CD9B5309C33D
+
+[core]
+    editor = vim
+    excludesfile = ~/.gitignore_global
+    pager = delta
+    autocrlf = input
+    precomposeunicode = true
+    untrackedCache = true
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+    followTags = true
+
+[fetch]
+    prune = true
+    pruneTags = true
+
+[commit]
+    gpgsign = true
+    template = ~/.stCommitMsg
+    verbose = true
+
+[gpg]
+    program = /opt/homebrew/bin/gpg
+    format = openpgp
+
+[gpg "ssh"]
+    allowedsignersfile = ~/.ssh/id_ed25519.pub
+    program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+
+[tag]
+    forceSignAnnotated = true
+
+[filter "lfs"]
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+
+[diff]
+    tool = kaleidoscope
+
+[merge]
+    tool = kaleidoscope
+    conflictstyle = diff3
+
+[mergetool]
+    keepBackup = true
+    prompt = false
+
+[difftool "kaleidoscope"]
+    cmd = ksdiff --partial-changeset --relative-path "$MERGED" -- "$LOCAL" -- "$REMOTE"
+    trustExitCode = true
+
+[mergetool "kaleidoscope"]
+    cmd = ksdiff --merge --output "$MERGED" --base "$BASE" -- "$LOCAL" -- "$REMOTE"
+    trustExitCode = true
+
+[difftool "vscode"]
+    cmd = code --wait --diff "$LOCAL" "$REMOTE"
+
+[mergetool "vscode"]
+    cmd = code --wait --merge "$REMOTE" "$LOCAL" "$BASE" "$MERGED"
+
+[difftool "vimdiff"]
+    cmd = vim -d "$LOCAL" "$REMOTE"
+
+[mergetool "vimdiff"]
+    cmd = vim -d "$LOCAL" "$REMOTE" "$MERGED" -c '$wincmd w' -c 'wincmd J'
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    features = side-by-side line-numbers decorations
+    navigate = true
+    syntax-theme = GitHub
+    side-by-side = false
+    line-numbers = true
+
+[credential]
+    helper = osxkeychain
+
+[alias]
+    st = status
+    ci = commit
+    br = branch
+    co = checkout
+    df = diff
+    dc = diff --cached
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    amend = commit --amend --no-edit
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow
+    frag = magenta
+    old = red
+    new = green
+
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+
+[url "git@github.com:"]
+    insteadOf = gh:
+
+[include]
+    path = ~/.gitconfig.local
