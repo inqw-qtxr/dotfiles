@@ -55,11 +55,6 @@ return {
 				ensure_installed = lsps, -- Corrected variable name from 'servers' to 'lsps'
 				automatic_installation = true,
 			})
-
-			require("mason-lspconfig.dap").setup({
-				ensure_installed = daps,
-				automatic_installation = true,
-			})
 		end,
 	},
 }

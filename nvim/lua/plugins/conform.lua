@@ -30,6 +30,7 @@ return {
 			scss = { "stylelint" },
 			go = { "gofumpt", "gopls", "golines" },
 			rust = { "rustfmt" },
+			terraform = { "terraform-ls" },
 		},
 		format_on_save = {
 			timeout_ms = 500,

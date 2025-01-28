@@ -13,6 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	spec = {
+		{ import = "plugins.icons" },
 		{ import = "plugins.gruvbox" },
 		{ import = "plugins.autopairs" },
 		{ import = "plugins.lualine" },
@@ -24,7 +25,7 @@ require("lazy").setup({
 		{ import = "plugins.harpoon" },
 		{ import = "plugins.lint" },
 		{ import = "plugins.lsp" },
-		-- { import = "plugins.mason-lsp" },
+		{ import = "plugins.mason-lsp" },
 		{ import = "plugins.project" },
 		{ import = "plugins.telescope" },
 		{ import = "plugins.tree" },

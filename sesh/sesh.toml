@@ -3,20 +3,14 @@ startup_command = "nvim -c ':Telescope find_files'"
 preview_command = "lsd --all --long --color=always --group-dirs first {}"
 
 [[session]]
-name = "boost"
+name = "work"
 path = "~/github.com/boost-legal"
-startup_command = "nvim . -c ':Telescope find_files'"
+startup_command = "tmux split-window -h -c ~/github.com/boost-legal/boost-api"
 preview_command = "lsd --all --long --color=always --group-dirs first {}"
 
 [[session]]
-name = "hum api"
+name = "hum"
 path = "~/github.com/inqw-qtxr/hum/src/api"
-startup_command = "nvim . -c ':Telescope find_files'"
-preview_command = "lsd --all --long --color=always --group-dirs first {}"
-
-[[session]]
-name = "hum client"
-path = "~/github.com/inqw-qtxr/hum/src/client"
 startup_command = "nvim . -c ':Telescope find_files'"
 preview_command = "lsd --all --long --color=always --group-dirs first {}"
 
@@ -25,3 +19,8 @@ name = "dotfiles"
 path = "~/dotfiles"
 startup_command = "nvim . -c ':Telescope find_files'"
 preview_command = "lsd --all --long --color=always --group-dirs first {}"
+
+[[session]]
+name = "personal"
+path = "~/github.com/inqw-qtxr/"
+startup_command = "lsd --all --long --color=always --group-dirs first {}"

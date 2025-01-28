@@ -178,6 +178,7 @@ return {
 		end
 
 		local servers = {
+			"bashls",
 			"lua_ls",
 			"gopls",
 			"solargraph",
