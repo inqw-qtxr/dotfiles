@@ -26,12 +26,12 @@
     pruneTags = true
 
 [commit]
-    gpgsign = true
+	gpgsign = true
     template = ~/.stCommitMsg
     verbose = true
 
 [gpg]
-    program = /opt/homebrew/bin/gpg
+	program = gpg
     format = openpgp
 
 [gpg "ssh"]

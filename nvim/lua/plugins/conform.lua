@@ -15,7 +15,6 @@ return {
 	opts = {
 		formatters_by_ft = {
 			ruby = { "rubocop" },
-			sql = { "sqlformat" },
 			sh = { "shfmt" },
 			lua = { "stylua" },
 			python = { "black", "isort" },
@@ -42,7 +41,7 @@ return {
 			},
 		},
 		notify_on_error = true,
-		log_level = vim.log.levels.ERROR,
+		log_level = vim.log.levels.WARN,
 	},
 	init = function()
 		vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
