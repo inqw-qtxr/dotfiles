@@ -1,1 +1,10 @@
 sync_frequency = "20m"
+
+search_mode_shell_up_key_binding = "workspace"
+filter_mode_shell_up_key_binding = "workspace"
+
+worspaces = true
+
+style = "full"
+
+exit_mode = "return-query"

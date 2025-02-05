@@ -1,4 +1,4 @@
-# shell integration 
+# shell integration
 shell-integration=zsh
 shell-integration-features=true
 
@@ -6,17 +6,15 @@ shell-integration-features=true
 font-family="FiraCode Nerd Font Mono"
 font-size=12
 
-# window padding so tmux does not have 
+# window padding so tmux does not have
 # extra space before the command line
 window-padding-y = 0
 
 # default is GruvboxDarkHard
-theme="GruvboxDarkHard"
+theme="ayu"
 
 scrollback-limit=1000000
 
 cursor-style-blink=true
 
 confirm-close-surface=false
-
-keybind=ctrl+k=clear_screen

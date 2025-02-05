@@ -3,79 +3,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Initialize zinit
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
-
-# Load some plugins (add these after zinit initialization)
-zinit light zsh-users/zsh-autosuggestions
-zinit light zsh-users/zsh-completions
-zinit light zdharma-continuum/fast-syntax-highlighting
-zinit light zdharma-continuum/history-search-multi-word
-# zinit light Aloxaf/fzf-tab
-
-# Load powerlevel10k theme
-zinit ice depth=1; zinit light romkatv/powerlevel10k
-
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Source Powerlevel10k configuration
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# Your existing environment variables and settings
-export GPG_TTY=$(tty)
-export PYTHONDONTWRITEBYTECODE=1
-export HOMEBREW_NO_ENV_HINTS=1
-export PATH="$HOME/go/bin:$PATH"
-export PATH="$HOME/local/ruby/bin:$PATH"
-export PATH="$PATH:$HOME/.gem/ruby/3.0.3"
-
-# Editor Configuration
-if which nvim >/dev/null 2>&1; then
-  export EDITOR=nvim
-else
-  export EDITOR=vi
-fi
-
-# NVM Configuration
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-
-# Your aliases
-alias vim="$EDITOR"
-alias cd="z"
-alias ls="lsd"
-alias cat="bat"
-alias tls="tmux ls"
-alias tma="tmux attach -t"
-alias tmn="tmux new -s"
-
-# Google Cloud SDK
-if [ -f '/Users/williamhicks/Downloads/google-cloud-sdk/path.zsh.inc' ]; then
-  . '/Users/williamhicks/Downloads/google-cloud-sdk/path.zsh.inc'
-fi
-if [ -f '/Users/williamhicks/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then
-  . '/Users/williamhicks/Downloads/google-cloud-sdk/completion.zsh.inc'
-fi
-
-# fzf configuration
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-eval "$(zoxide init zsh)"
-
-# Completions
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
-
-# Enable completion system
-autoload -Uz compinit
-compinit
-
-### Added by Zinit's installer
+### Zinit Installation and Initialization
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})&hellip;%f"
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
     command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
     command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
         print -P "%F{33} %F{34}Installation successful.%f%b" || \
@@ -86,14 +16,84 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
+### Zinit Plugins
+# Core plugins
+zinit load zsh-users/zsh-autosuggestions
+zinit load zsh-users/zsh-completions
+zinit load zdharma-continuum/fast-syntax-highlighting
+zinit load zdharma-continuum/history-search-multi-word
+zinit load Aloxaf/fzf-tab
+
+# Important annexes
 zinit light-mode for \
     zdharma-continuum/zinit-annex-as-monitor \
     zdharma-continuum/zinit-annex-bin-gem-node \
     zdharma-continuum/zinit-annex-patch-dl \
     zdharma-continuum/zinit-annex-rust
 
+# Theme
+zinit ice depth=1
+zinit light romkatv/powerlevel10k
+
+### Environment Variables
+export GPG_TTY=$(tty)
+export PYTHONDONTWRITEBYTECODE=1
+export HOMEBREW_NO_ENV_HINTS=1
+export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/local/ruby/bin:$PATH"
+export PATH="$PATH:$HOME/.gem/ruby/3.0.3"
+
+### Tool Configurations
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Editor
+if which nvim >/dev/null 2>&1; then
+  export EDITOR=nvim
+else
+  export EDITOR=vi
+fi
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+# fzf and zoxide
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+eval "$(zoxide init zsh)"
+
+# Atuin
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh)"
+eval "$(atuin gen-completions -s zsh)"
+
+# Cargo
+. "$HOME/.cargo/env"
+
+### Aliases
+alias cd="z"
+alias ls="lsd"
+alias cat="bat"
+alias tls="tmux ls"
+alias tma="tmux attach -t"
+alias tmn="tmux new -s"
+
+export MANPAGER="col -b | bat -l man -p"
+
+### Completions
+autoload -Uz compinit bashcompinit
+bashcompinit
+compinit
+
+# Docker completions
+fpath=(/Users/williamhicks/.docker/completions $fpath)
+
+# Tool-specific completions
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
+complete -o nospace -C /opt/homebrew/bin/vault vault
+
+### Custom Functions
 function sesh-sessions() {
   {
     exec </dev/tty
@@ -111,18 +111,20 @@ bindkey -M emacs '\es' sesh-sessions
 bindkey -M vicmd '\es' sesh-sessions
 bindkey -M viins '\es' sesh-sessions
 
+# Update PATH
+if [ -f '/Users/williamhicks/google-cloud-sdk/path.zsh.inc' ]; then
+  . '/Users/williamhicks/google-cloud-sdk/path.zsh.inc'
+fi
 
-. "$HOME/.cargo/env"
+# Enable shell completion
+if [ -f '/Users/williamhicks/google-cloud-sdk/completion.zsh.inc' ]; then
+  . '/Users/williamhicks/google-cloud-sdk/completion.zsh.inc'
+fi
 
+### Theme Configuration
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-complete -o nospace -C /opt/homebrew/bin/vault vault
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/williamhicks/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/williamhicks/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/williamhicks/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/williamhicks/google-cloud-sdk/completion.zsh.inc'; fi
-
-. "$HOME/.atuin/bin/env"
-
-eval "$(atuin init zsh)"
+# if there is a python virtual environment in the home directory, activate it
+if [ -d "$HOME/.venv" ]; then
+  source "$HOME/.venv/bin/activate"
+fi
