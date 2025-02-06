@@ -1,3 +1,5 @@
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
+
 # Keep the p10k instant prompt at the very top
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -18,11 +20,10 @@ autoload -Uz _zinit
 
 ### Zinit Plugins
 # Core plugins
-zinit load zsh-users/zsh-autosuggestions
-zinit load zsh-users/zsh-completions
-zinit load zdharma-continuum/fast-syntax-highlighting
-zinit load zdharma-continuum/history-search-multi-word
-zinit load Aloxaf/fzf-tab
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light zdharma-continuum/history-search-multi-word
 
 # Important annexes
 zinit light-mode for \
@@ -47,12 +48,7 @@ export PATH="$PATH:$HOME/.gem/ruby/3.0.3"
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Editor
-if which nvim >/dev/null 2>&1; then
-  export EDITOR=nvim
-else
-  export EDITOR=vi
-fi
+export EDITOR=nvim
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
@@ -63,13 +59,25 @@ export NVM_DIR="$HOME/.nvm"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(zoxide init zsh)"
 
+eval "$(op completion zsh)"; compdef _op op
+
 # Atuin
 . "$HOME/.atuin/bin/env"
 eval "$(atuin init zsh)"
-eval "$(atuin gen-completions -s zsh)"
 
 # Cargo
 . "$HOME/.cargo/env"
+
+# Tool-specific completions
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
+complete -o nospace -C /opt/homebrew/bin/vault vault
+complete -o nospace -C /opt/homebrew/bin/consul consul
+complete -o nospace -C /opt/homebrew/bin/nomad nomad
+
+# Initialize completion system
+autoload -Uz compinit bashcompinit
+compinit
+bashcompinit
 
 ### Aliases
 alias cd="z"
@@ -78,20 +86,10 @@ alias cat="bat"
 alias tls="tmux ls"
 alias tma="tmux attach -t"
 alias tmn="tmux new -s"
+alias tmk="tmux kill-session -t"
 
-export MANPAGER="col -b | bat -l man -p"
-
-### Completions
-autoload -Uz compinit bashcompinit
-bashcompinit
-compinit
-
-# Docker completions
-fpath=(/Users/williamhicks/.docker/completions $fpath)
-
-# Tool-specific completions
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
-complete -o nospace -C /opt/homebrew/bin/vault vault
+export MANPAGER="col -bx | bat -l man"
+# export PAGER="less -R"
 
 ### Custom Functions
 function sesh-sessions() {
@@ -128,3 +126,8 @@ fi
 if [ -d "$HOME/.venv" ]; then
   source "$HOME/.venv/bin/activate"
 fi
+
+# load 1password cli zsh-completions
+
+
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
