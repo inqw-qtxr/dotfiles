@@ -27,6 +27,9 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
+# Detect the operating system
+OS="$(uname -s)"
+
 # Remove symbolic links
 print_status "Removing symbolic links..."
 remove_symlink() {
@@ -46,15 +49,43 @@ remove_symlink "$HOME/.aliases"
 remove_symlink "$HOME/.gitconfig"
 remove_symlink "$HOME/.gitignore_global"
 remove_symlink "$HOME/.config/ghostty/config"
-remove_symlink "$HOME/Library/Application Support/Firefox/Profiles/*.default/user.js"
+
+# macOS specific symbolic link removal
+if [[ "$OS" == "Darwin" ]]; then
+    remove_symlink "$HOME/Library/Application Support/Firefox/Profiles/*.default/user.js"
+fi
 
 # Ask if user wants to remove installed packages
 read -p "Do you want to remove installed packages (brew packages, oh-my-zsh, etc.)? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Remove Homebrew packages
-    print_status "Removing Homebrew packages..."
-    brew uninstall neovim tmux zsh ghostty alacritty
+    case "$OS" in
+        Darwin)
+            # Remove Homebrew packages
+            print_status "Removing Homebrew packages..."
+            brew uninstall neovim tmux zsh ghostty alacritty
+            ;;
+        Linux)
+            # Remove packages using apt or yum
+            if command -v apt &> /dev/null; then
+                print_status "Removing packages using apt..."
+                sudo apt remove --purge -y git vim neovim tmux zsh fzf ripgrep fd-find bat htop jq tree gh lazygit cmake g++
+            elif command -v yum &> /dev/null; then
+                print_status "Removing packages using yum..."
+                sudo yum remove -y git vim neovim tmux zsh fzf ripgrep fd-find bat htop jq tree gh lazygit cmake gcc-c++
+            else
+                print_error "Neither apt nor yum found. Please remove packages manually."
+            fi
+            ;;
+        CYGWIN*|MINGW32*|MSYS*|MINGW*)
+            # Remove packages using Chocolatey
+            print_status "Removing packages using Chocolatey..."
+            choco uninstall git vim neovim tmux zsh fzf ripgrep fd bat htop jq tree gh lazygit cmake
+            ;;
+        *)
+            print_error "Unsupported operating system: $OS"
+            ;;
+    esac
 
     # Remove oh-my-zsh
     if [ -d "$HOME/.oh-my-zsh" ]; then

@@ -40,14 +40,30 @@ zinit light romkatv/powerlevel10k
 export GPG_TTY=$(tty)
 export PYTHONDONTWRITEBYTECODE=1
 export HOMEBREW_NO_ENV_HINTS=1
-export PATH="$HOME/go/bin:$PATH"
-export PATH="$HOME/local/ruby/bin:$PATH"
-export PATH="$PATH:$HOME/.gem/ruby/3.0.3"
+
+# Add conditional logic to check for the operating system and set OS-specific environment variables
+OS="$(uname -s)"
+case "$OS" in
+    Darwin)
+        export PATH="$HOME/go/bin:$PATH"
+        export PATH="$HOME/local/ruby/bin:$PATH"
+        export PATH="$PATH:$HOME/.gem/ruby/3.0.3"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+        ;;
+    Linux)
+        export PATH="$HOME/go/bin:$PATH"
+        export PATH="$HOME/.local/bin:$PATH"
+        ;;
+    CYGWIN*|MINGW32*|MSYS*|MINGW*)
+        export PATH="$HOME/go/bin:$PATH"
+        export PATH="$HOME/AppData/Local/Programs/Python/Python39/Scripts/:$PATH"
+        ;;
+    *)
+        export PATH="$HOME/go/bin:$PATH"
+        ;;
+esac
 
 ### Tool Configurations
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
 export EDITOR=nvim
 
 # NVM

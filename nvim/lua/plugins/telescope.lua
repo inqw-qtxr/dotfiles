@@ -194,23 +194,74 @@ return {
 			pickers = {
 				find_files = {
 					hidden = true,
-					find_command = {
-						"fd",
-						"--type",
-						"f",
-						"--hidden",
-						"--strip-cwd-prefix",
-						"--exclude",
-						".git",
-						"--exclude",
-						"node_modules",
-						"--exclude",
-						"target",
-						"--exclude",
-						"dist",
-						"--exclude",
-						"build",
-					},
+					find_command = (function()
+						local os_name = vim.loop.os_uname().sysname
+						if os_name == "Darwin" then
+							return {
+								"fd",
+								"--type",
+								"f",
+								"--hidden",
+								"--strip-cwd-prefix",
+								"--exclude",
+								".git",
+								"--exclude",
+								"node_modules",
+								"--exclude",
+								"target",
+								"--exclude",
+								"dist",
+								"--exclude",
+								"build",
+							}
+						elseif os_name == "Linux" then
+							return {
+								"find",
+								".",
+								"-type",
+								"f",
+								"-not",
+								"-path",
+								"'*/\\.*'",
+								"-not",
+								"-path",
+								"'*/node_modules/*'",
+								"-not",
+								"-path",
+								"'*/target/*'",
+								"-not",
+								"-path",
+								"'*/dist/*'",
+								"-not",
+								"-path",
+								"'*/build/*'",
+							}
+						elseif os_name == "Windows_NT" then
+							return {
+								"powershell",
+								"-Command",
+								"Get-ChildItem -Recurse -File -Exclude .git,node_modules,target,dist,build",
+							}
+						else
+							return {
+								"fd",
+								"--type",
+								"f",
+								"--hidden",
+								"--strip-cwd-prefix",
+								"--exclude",
+								".git",
+								"--exclude",
+								"node_modules",
+								"--exclude",
+								"target",
+								"--exclude",
+								"dist",
+								"--exclude",
+								"build",
+							}
+						end
+					end)(),
 				},
 				live_grep = {
 					additional_args = function(_)
