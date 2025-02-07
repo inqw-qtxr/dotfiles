@@ -54,3 +54,19 @@ cask "docker"    # Docker Desktop
 # Modern CLI Alternatives
 brew "lsd"       # Modern ls
 brew "erdtree"   # Modern tree
+
+# Linux-specific packages
+if system("uname -s") == "Linux"
+  brew "build-essential"
+  brew "linuxbrew-wrapper"
+  brew "linuxbrew-core"
+  brew "linuxbrew-extra"
+end
+
+# Windows-specific packages
+if system("uname -s") == "Windows_NT"
+  brew "choco"
+  brew "windowsbrew-wrapper"
+  brew "windowsbrew-core"
+  brew "windowsbrew-extra"
+end

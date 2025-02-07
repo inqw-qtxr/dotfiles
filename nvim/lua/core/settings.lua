@@ -16,7 +16,20 @@ vim.opt.termguicolors = true
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undofile = true
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+
+-- Add conditional logic to check for the operating system and set OS-specific settings
+local os_name = vim.loop.os_uname().sysname
+
+if os_name == "Darwin" then
+    vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+elseif os_name == "Linux" then
+    vim.opt.undodir = os.getenv("HOME") .. "/.config/nvim/undodir"
+elseif os_name == "Windows_NT" then
+    vim.opt.undodir = os.getenv("USERPROFILE") .. "\\vimfiles\\undodir"
+else
+    vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+end
+
 vim.opt.undolevels = 10000 -- no need for undoreload when undolevels is set
 
 -- timing settings and quality of life

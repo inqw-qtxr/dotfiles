@@ -19,11 +19,8 @@ print_error() {
     echo -e "${RED}==>${NC} $1"
 }
 
-# Check if running on macOS
-if [[ "$OSTYPE" != "darwin"* ]]; then
-    print_error "This script is intended for macOS only"
-    exit 1
-fi
+# Detect the operating system
+OS="$(uname -s)"
 
 # Create necessary directories
 print_status "Creating necessary directories..."
@@ -31,18 +28,64 @@ mkdir -p ~/.config/{alacritty,nvim,ghostty}
 mkdir -p ~/.ssh
 mkdir -p ~/.local/bin
 
-# Install Homebrew if not installed
-if ! command -v brew &> /dev/null; then
-    print_status "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-else
-    print_status "Homebrew already installed, updating..."
-    brew update
-fi
+# Install packages based on the operating system
+case "$OS" in
+    Darwin)
+        # macOS specific installation
+        print_status "Detected macOS"
 
-# Install packages from Brewfile
-print_status "Installing packages from Brewfile..."
-brew bundle install --file="$DOTFILES/brew/Brewfile"
+        # Install Homebrew if not installed
+        if ! command -v brew &> /dev/null; then
+            print_status "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        else
+            print_status "Homebrew already installed, updating..."
+            brew update
+        fi
+
+        # Install packages from Brewfile
+        print_status "Installing packages from Brewfile..."
+        brew bundle install --file="$DOTFILES/brew/Brewfile"
+        ;;
+    Linux)
+        # Linux specific installation
+        print_status "Detected Linux"
+
+        # Install packages using apt or yum
+        if command -v apt &> /dev/null; then
+            print_status "Installing packages using apt..."
+            sudo apt update
+            sudo apt install -y git vim neovim tmux zsh fzf ripgrep fd-find bat htop jq tree gh lazygit cmake g++ build-essential
+        elif command -v yum &> /dev/null; then
+            print_status "Installing packages using yum..."
+            sudo yum install -y git vim neovim tmux zsh fzf ripgrep fd-find bat htop jq tree gh lazygit cmake gcc-c++ make
+        else
+            print_error "Neither apt nor yum found. Please install packages manually."
+            exit 1
+        fi
+        ;;
+    CYGWIN*|MINGW32*|MSYS*|MINGW*)
+        # Windows specific installation
+        print_status "Detected Windows"
+
+        # Install packages using Chocolatey
+        if ! command -v choco &> /dev/null; then
+            print_status "Installing Chocolatey..."
+            /bin/bash -c "$(curl -fsSL https://chocolatey.org/install.sh)"
+        else
+            print_status "Chocolatey already installed, updating..."
+            choco upgrade chocolatey
+        fi
+
+        # Install packages using choco
+        print_status "Installing packages using choco..."
+        choco install git vim neovim tmux zsh fzf ripgrep fd bat htop jq tree gh lazygit cmake
+        ;;
+    *)
+        print_error "Unsupported operating system: $OS"
+        exit 1
+        ;;
+esac
 
 # Install oh-my-zsh if not installed
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -94,7 +137,11 @@ create_symlink "$DOTFILES/zsh/aliases" "$HOME/.aliases"
 create_symlink "$DOTFILES/git/.gitconfig" "$HOME/.gitconfig"
 create_symlink "$DOTFILES/git/.gitignore_global" "$HOME/.gitignore_global"
 create_symlink "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
-create_symlink "$DOTFILES/mozilla/user.js" "$HOME/Library/Application Support/Firefox/Profiles/*.default/user.js"
+
+# macOS specific symbolic link
+if [[ "$OS" == "Darwin" ]]; then
+    create_symlink "$DOTFILES/mozilla/user.js" "$HOME/Library/Application Support/Firefox/Profiles/*.default/user.js"
+fi
 
 # Install Tmux Plugin Manager
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
